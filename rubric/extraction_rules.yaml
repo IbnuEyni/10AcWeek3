@@ -1,0 +1,85 @@
+# Extraction Rules Configuration
+# Document Intelligence Refinery
+
+# Confidence Thresholds
+confidence:
+  fast_text_minimum: 0.7
+  layout_aware_minimum: 0.75
+  vision_minimum: 0.8
+  escalation_threshold: 0.7
+
+# Origin Type Detection
+origin_detection:
+  min_char_density: 0.01  # chars per point²
+  max_image_ratio: 0.5    # for native digital
+  font_metadata_weight: 0.3
+
+# Layout Complexity
+layout:
+  table_heavy_threshold: 10  # number of tables
+  multi_column_threshold: 2   # number of columns
+
+# Chunking Rules (Constitution)
+chunking:
+  max_tokens: 512
+  overlap_tokens: 50
+  
+  rules:
+    - name: "table_integrity"
+      description: "Table cells never split from headers"
+      
+    - name: "figure_caption_binding"
+      description: "Figure captions stored as parent metadata"
+      
+    - name: "list_coherence"
+      description: "Numbered lists kept as single LDU unless exceeds max_tokens"
+      
+    - name: "section_hierarchy"
+      description: "Section headers stored as parent metadata on child chunks"
+      
+    - name: "cross_reference_resolution"
+      description: "Cross-references resolved and stored as relationships"
+
+# Cost Limits
+cost:
+  max_per_document: 1.0  # USD
+  fast_text_per_page: 0.001
+  layout_aware_per_page: 0.01
+  vision_per_page: 0.02
+
+# Domain Keywords
+domain_keywords:
+  financial:
+    - revenue
+    - financial
+    - balance sheet
+    - income
+    - audit
+    - fiscal
+    - expenditure
+    - budget
+    
+  legal:
+    - contract
+    - agreement
+    - legal
+    - court
+    - law
+    - regulation
+    - compliance
+    
+  technical:
+    - technical
+    - specification
+    - engineering
+    - system
+    - architecture
+    - implementation
+    
+  medical:
+    - medical
+    - patient
+    - clinical
+    - diagnosis
+    - pharmaceutical
+    - health
