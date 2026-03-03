@@ -33,10 +33,12 @@ class VisionExtractor(BaseExtractor):
     
     def extract(self, pdf_path: str, profile: DocumentProfile) -> Tuple[ExtractedDocument, float]:
         """Extract using Gemini vision model"""
+        from ..exceptions import BudgetExceededError
+        
         # Budget guard
         estimated_cost = self.estimate_cost(profile)
         if estimated_cost > self.MAX_COST_PER_DOC:
-            raise ValueError(f"Estimated cost ${estimated_cost:.2f} exceeds budget cap ${self.MAX_COST_PER_DOC}")
+            raise BudgetExceededError(estimated_cost, self.MAX_COST_PER_DOC)
         
         text_blocks = []
         tables = []

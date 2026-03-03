@@ -91,8 +91,8 @@ class PDFAnalyzer:
                 
                 return metrics
                 
-        except pdfplumber.pdfminer.pdfparser.PDFSyntaxError as e:
-            raise DocumentValidationError(f"Corrupted PDF file: {e}")
+        except DocumentValidationError:
+            raise
         except Exception as e:
             raise TriageError(f"Failed to analyze document: {e}")
     
