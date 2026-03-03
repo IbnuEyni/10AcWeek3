@@ -5,51 +5,88 @@ from datetime import datetime
 from ..models.document_profile import DocumentProfile, ExtractionCost
 from ..models.extracted_document import ExtractedDocument
 from ..strategies import FastTextExtractor, LayoutExtractor, VisionExtractor
+from ..logging_config import get_logger
+from ..monitoring import metrics, PerformanceMonitor
+from ..config import config
+
+logger = get_logger("extractor")
 
 
 class ExtractionRouter:
     """Routes documents to appropriate extraction strategy with escalation"""
     
-    CONFIDENCE_THRESHOLD = 0.7
-    
-    def __init__(self, ledger_path: str = ".refinery/extraction_ledger.jsonl"):
-        self.ledger_path = Path(ledger_path)
+    def __init__(self, ledger_path: str = None):
+        self.ledger_path = Path(ledger_path or config.paths.ledger_path)
         self.ledger_path.parent.mkdir(parents=True, exist_ok=True)
+        self.CONFIDENCE_THRESHOLD = config.extraction.confidence_threshold
         
         self.fast_extractor = FastTextExtractor()
         self.layout_extractor = LayoutExtractor()
         self.vision_extractor = VisionExtractor()
+        
+        logger.info(f"ExtractionRouter initialized with threshold={self.CONFIDENCE_THRESHOLD}")
     
     def extract(self, pdf_path: str, profile: DocumentProfile) -> ExtractedDocument:
         """Route to appropriate strategy with automatic escalation"""
-        start_time = datetime.now()
+        monitor = PerformanceMonitor()
+        logger.info(f"Starting extraction for {profile.doc_id}")
         
-        # Select initial strategy based on profile
+        # Select initial strategy
         strategy = self._select_strategy(profile)
+        monitor.checkpoint("strategy_selected")
+        logger.debug(f"Selected strategy: {strategy.strategy_name}")
         
         # Attempt extraction
-        extracted_doc, confidence = strategy.extract(pdf_path, profile)
-        
-        # Escalation guard
-        if confidence < self.CONFIDENCE_THRESHOLD:
-            print(f"Low confidence ({confidence:.2f}), escalating...")
-            extracted_doc, confidence = self._escalate(pdf_path, profile, strategy)
-        
-        # Calculate metrics
-        processing_time = (datetime.now() - start_time).total_seconds() * 1000
-        cost_estimate = strategy.estimate_cost(profile)
-        
-        # Log to ledger
-        self._log_extraction(
-            profile=profile,
-            strategy_used=strategy.strategy_name,
-            confidence_score=confidence,
-            cost_estimate=cost_estimate,
-            processing_time_ms=processing_time,
-            escalation_triggered=confidence < self.CONFIDENCE_THRESHOLD
-        )
-        
-        return extracted_doc
+        try:
+            extracted_doc, confidence = strategy.extract(pdf_path, profile)
+            monitor.checkpoint("extraction_complete")
+            
+            # Escalation guard
+            escalated = False
+            if confidence < self.CONFIDENCE_THRESHOLD:
+                logger.warning(f"Low confidence ({confidence:.2f}), escalating...")
+                extracted_doc, confidence = self._escalate(pdf_path, profile, strategy)
+                escalated = True
+                monitor.checkpoint("escalation_complete")
+            
+            # Calculate metrics
+            processing_time = monitor.get_elapsed() * 1000
+            cost_estimate = strategy.estimate_cost(profile)
+            
+            # Record metrics
+            metrics.record_extraction(
+                strategy=strategy.strategy_name,
+                cost=cost_estimate,
+                time_ms=processing_time,
+                success=True,
+                escalated=escalated
+            )
+            
+            # Log to ledger
+            self._log_extraction(
+                profile=profile,
+                strategy_used=strategy.strategy_name,
+                confidence_score=confidence,
+                cost_estimate=cost_estimate,
+                processing_time_ms=processing_time,
+                escalation_triggered=escalated
+            )
+            
+            logger.info(f"Extraction complete: {profile.doc_id} | {strategy.strategy_name} | "
+                       f"confidence={confidence:.2f} | time={processing_time:.0f}ms")
+            
+            return extracted_doc
+            
+        except Exception as e:
+            processing_time = monitor.get_elapsed() * 1000
+            metrics.record_extraction(
+                strategy=strategy.strategy_name,
+                cost=0,
+                time_ms=processing_time,
+                success=False
+            )
+            logger.error(f"Extraction failed for {profile.doc_id}: {e}")
+            raise
     
     def _select_strategy(self, profile: DocumentProfile):
         """Select extraction strategy based on profile"""
