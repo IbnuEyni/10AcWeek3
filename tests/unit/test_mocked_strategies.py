@@ -1,5 +1,6 @@
 """Tests with mocked external dependencies"""
 
+import os
 import pytest
 from unittest.mock import patch, MagicMock, Mock
 from src.strategies.vision_augmented import VisionExtractor
@@ -62,15 +63,17 @@ class TestVisionExtractorMocked:
     
     def test_no_api_key_fallback(self, sample_profile, tmp_path):
         """Test fallback when no API key is provided"""
-        extractor = VisionExtractor(api_key=None)
-        
-        test_pdf = tmp_path / "test.pdf"
-        test_pdf.write_bytes(b"%PDF-1.4\n")
-        
-        doc, confidence = extractor.extract(str(test_pdf), sample_profile)
-        
-        assert confidence == 0.5  # Lower confidence for placeholder
-        assert doc.extraction_strategy == "vision_augmented"
+        with patch.dict(os.environ, {}, clear=True):  # Clear environment
+            extractor = VisionExtractor(api_key=None)
+            
+            test_pdf = tmp_path / "test.pdf"
+            test_pdf.write_bytes(b"%PDF-1.4\n")
+            
+            doc, confidence = extractor.extract(str(test_pdf), sample_profile)
+            
+            assert confidence == 0.5  # Lower confidence for placeholder
+            assert doc.extraction_strategy == "vision_augmented"
+            assert not extractor.use_gemini
 
 
 class TestFastTextExtractorMocked:
