@@ -4,7 +4,10 @@ from pathlib import Path
 from typing import Tuple
 from datetime import datetime
 from ..models.document_profile import DocumentProfile, ExtractionCost
-from ..models.extracted_document import ExtractedDocument, EscalationHistory, EscalationAttempt
+from ..models.extracted_document import (
+    ExtractedDocument, EscalationHistory, EscalationAttempt, 
+    RoutingSummary, ExtractionStrategy, EscalationReason, ProcessingStatus
+)
 from ..strategies import FastTextExtractor, LayoutExtractor, VisionExtractor
 from ..logging_config import get_logger
 from ..monitoring import metrics, PerformanceMonitor
@@ -45,7 +48,7 @@ class ExtractionRouter:
         # Initialize escalation tracking
         escalation_history = EscalationHistory(
             attempts=[],
-            final_strategy="",
+            final_strategy=ExtractionStrategy.FAST_TEXT,
             total_attempts=0,
             escalation_triggered=False
         )
@@ -62,11 +65,12 @@ class ExtractionRouter:
             
             # Record initial attempt
             escalation_history.attempts.append(EscalationAttempt(
-                strategy=strategy.strategy_name,
+                strategy=ExtractionStrategy(strategy.strategy_name),
                 confidence=confidence,
-                reason="initial_strategy",
+                reason=EscalationReason.LOW_CONFIDENCE,
                 timestamp=datetime.now().isoformat(),
-                cost_estimate=strategy.estimate_cost(profile)
+                cost_estimate=strategy.estimate_cost(profile),
+                status=ProcessingStatus.SUCCESS
             ))
             escalation_history.total_attempts = 1
             
@@ -78,8 +82,21 @@ class ExtractionRouter:
                 )
                 monitor.checkpoint("escalation_complete")
             
-            escalation_history.final_strategy = strategy.strategy_name
+            escalation_history.final_strategy = ExtractionStrategy(strategy.strategy_name)
             extracted_doc.escalation_history = escalation_history
+            
+            # Create routing summary
+            routing_summary = RoutingSummary(
+                selected_strategy=ExtractionStrategy(strategy.strategy_name),
+                strategies_attempted=[ExtractionStrategy(strategy.strategy_name)],
+                total_attempts=escalation_history.total_attempts,
+                final_confidence=confidence,
+                escalation_triggered=escalation_history.escalation_triggered,
+                total_cost=strategy.estimate_cost(profile),
+                processing_time_ms=int(monitor.get_elapsed() * 1000),
+                status=ProcessingStatus.SUCCESS
+            )
+            extracted_doc.routing_summary = routing_summary
             
             # Calculate metrics
             processing_time = monitor.get_elapsed() * 1000
@@ -162,14 +179,15 @@ class ExtractionRouter:
         
         # Record escalation attempt
         history.attempts.append(EscalationAttempt(
-            strategy=next_strategy_name,
+            strategy=ExtractionStrategy(next_strategy_name),
             confidence=confidence,
-            reason=f"escalated_from_{current_strategy.strategy_name}_low_confidence",
+            reason=EscalationReason.LOW_CONFIDENCE,
             timestamp=datetime.now().isoformat(),
-            cost_estimate=next_strategy.estimate_cost(profile)
+            cost_estimate=next_strategy.estimate_cost(profile),
+            status=ProcessingStatus.SUCCESS
         ))
         history.total_attempts += 1
-        history.final_strategy = next_strategy_name
+        history.final_strategy = ExtractionStrategy(next_strategy_name)
         
         return extracted_doc, confidence, history
     
