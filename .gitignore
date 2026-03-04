@@ -53,6 +53,8 @@ report/
 # helper
 check_ocr.py
 convert_to_pdf.py
+FEEDBACK_FIXES.md
+SCHEMA_EVIDENCE.md
 
 # OS
 .DS_Store

@@ -1,4 +1,5 @@
 import json
+import yaml
 from pathlib import Path
 from typing import Tuple
 from datetime import datetime
@@ -15,10 +16,20 @@ logger = get_logger("extractor")
 class ExtractionRouter:
     """Routes documents to appropriate extraction strategy with escalation"""
     
-    def __init__(self, ledger_path: str = None):
+    def __init__(self, ledger_path: str = None, config_path: str = None):
         self.ledger_path = Path(ledger_path or config.paths.ledger_path)
         self.ledger_path.parent.mkdir(parents=True, exist_ok=True)
-        self.CONFIDENCE_THRESHOLD = config.extraction.confidence_threshold
+        
+        # Load escalation config
+        if config_path is None:
+            config_path = Path(__file__).parent.parent.parent / "rubric" / "extraction_rules.yaml"
+        
+        with open(config_path) as f:
+            self.escalation_config = yaml.safe_load(f)['escalation']
+        
+        self.CONFIDENCE_THRESHOLD = self.escalation_config['confidence_threshold']
+        self.MAX_ATTEMPTS = self.escalation_config['max_attempts']
+        self.ESCALATION_ENABLED = self.escalation_config['enabled']
         
         self.fast_extractor = FastTextExtractor()
         self.layout_extractor = LayoutExtractor()
@@ -98,16 +109,30 @@ class ExtractionRouter:
             return self.vision_extractor
     
     def _escalate(self, pdf_path: str, profile: DocumentProfile, current_strategy) -> Tuple[ExtractedDocument, float]:
-        """Escalate to more powerful strategy"""
-        if current_strategy.strategy_name == "fast_text":
-            print("Escalating to layout-aware extraction...")
+        """Escalate to more powerful strategy based on config"""
+        if not self.ESCALATION_ENABLED:
+            logger.warning("Escalation disabled in config")
+            return current_strategy.extract(pdf_path, profile)
+        
+        # Get escalation path from config
+        strategy_order = self.escalation_config['strategy_order']
+        current_idx = strategy_order.index(current_strategy.strategy_name)
+        
+        # Check if we can escalate further
+        if current_idx >= len(strategy_order) - 1:
+            logger.warning(f"Already at highest strategy: {current_strategy.strategy_name}")
+            return current_strategy.extract(pdf_path, profile)
+        
+        # Escalate to next strategy
+        next_strategy_name = strategy_order[current_idx + 1]
+        logger.info(f"Escalating from {current_strategy.strategy_name} to {next_strategy_name}")
+        
+        if next_strategy_name == "layout_aware":
             return self.layout_extractor.extract(pdf_path, profile)
-        elif current_strategy.strategy_name == "layout_aware":
-            print("Escalating to vision-augmented extraction...")
+        elif next_strategy_name == "vision_augmented":
             return self.vision_extractor.extract(pdf_path, profile)
         else:
-            # Already at highest level
-            return current_strategy.extract(pdf_path, profile)
+            return self.fast_extractor.extract(pdf_path, profile)
     
     def _log_extraction(
         self, profile: DocumentProfile, strategy_used: str,

@@ -1,33 +1,50 @@
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class Section(BaseModel):
-    section_id: str
-    title: str
-    page_start: int
-    page_end: int
+    section_id: str = Field(..., min_length=1, description="Unique section identifier")
+    title: str = Field(..., min_length=1, description="Section title/heading")
+    page_start: int = Field(..., ge=0, description="Starting page number")
+    page_end: int = Field(..., ge=0, description="Ending page number")
     level: int = Field(ge=0, description="Hierarchy level, 0 is root")
     
     # Content metadata
-    summary: Optional[str] = None
-    key_entities: List[str] = Field(default_factory=list)
+    summary: Optional[str] = Field(None, description="Section summary")
+    key_entities: List[str] = Field(default_factory=list, description="Named entities in section")
     data_types_present: List[str] = Field(default_factory=list, description="tables, figures, equations")
     
     # Hierarchy
-    parent_id: Optional[str] = None
-    child_sections: List['Section'] = Field(default_factory=list)
+    parent_id: Optional[str] = Field(None, description="Parent section ID")
+    child_sections: List['Section'] = Field(default_factory=list, description="Nested subsections")
     
     # LDU references
-    ldu_ids: List[str] = Field(default_factory=list)
+    ldu_ids: List[str] = Field(default_factory=list, description="LDUs contained in this section")
+    
+    @field_validator('page_end')
+    @classmethod
+    def validate_page_range(cls, v, info):
+        """Ensure page_end >= page_start"""
+        if 'page_start' in info.data and v < info.data['page_start']:
+            raise ValueError("page_end must be >= page_start")
+        return v
 
 
 class PageIndex(BaseModel):
     """Hierarchical navigation structure for document"""
-    doc_id: str
-    filename: str
-    root_sections: List[Section]
-    total_pages: int
+    doc_id: str = Field(..., min_length=1, description="Document identifier")
+    filename: str = Field(..., min_length=1, description="Source filename")
+    root_sections: List[Section] = Field(..., min_length=1, description="Top-level sections")
+    total_pages: int = Field(..., gt=0, description="Total page count")
+    
+    @field_validator('root_sections')
+    @classmethod
+    def validate_sections(cls, v):
+        """Ensure sections don't overlap and cover valid page ranges"""
+        for section in v:
+            if section.page_start < 0 or section.page_end < section.page_start:
+                raise ValueError(f"Invalid page range in section {section.section_id}")
+        return v
     
     def find_section_by_page(self, page: int) -> Optional[Section]:
         """Find section containing given page"""

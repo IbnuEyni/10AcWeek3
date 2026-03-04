@@ -1,6 +1,7 @@
 import os
 import base64
-from typing import Tuple, List
+import yaml
+from typing import Tuple, List, Dict
 from pathlib import Path
 from .base import BaseExtractor
 from ..models.extracted_document import (
@@ -15,12 +16,21 @@ from .handwriting_ocr import HandwritingOCR
 class VisionExtractor(BaseExtractor):
     """Vision-augmented extraction using Gemini Flash 2.5 for scanned documents"""
     
-    MAX_COST_PER_DOC = 1.0  # $1 budget cap per document
-    
-    def __init__(self, api_key: str = None):
+    def __init__(self, api_key: str = None, config_path: str = None):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.model = "gemini-2.5-flash"  # Updated to working model
-        self.cost_per_image = 0.02  # Estimated cost per page
+        self.model = "gemini-2.5-flash"
+        
+        # Load configuration
+        if config_path is None:
+            config_path = Path(__file__).parent.parent.parent / "rubric" / "extraction_rules.yaml"
+        
+        with open(config_path) as f:
+            self.config = yaml.safe_load(f)
+        
+        # Extract config values
+        self.cost_per_image = self.config['cost']['vision_per_page']
+        self.MAX_COST_PER_DOC = self.config['cost']['vlm_budget_cap']
+        self.domain_prompts = self.config['domain_prompts']
         
         if self.api_key:
             try:
@@ -125,16 +135,11 @@ class VisionExtractor(BaseExtractor):
         if not self.use_gemini:
             return ""
         
-        # Domain-specific prompts
-        domain_prompts = {
-            "financial": "Focus on extracting financial data, tables, and numerical values with high precision.",
-            "legal": "Extract all text preserving legal structure, clauses, and formatting.",
-            "technical": "Extract technical specifications, diagrams descriptions, and structured data.",
-            "medical": "Extract medical information, patient data, and clinical findings carefully.",
-            "general": "Extract all text and structured data from this document."
-        }
-        
-        domain_hint = domain_prompts.get(profile.domain_hint, domain_prompts["general"])
+        # Get domain-specific prompt from config
+        domain_hint = self.domain_prompts.get(
+            profile.domain_hint, 
+            self.domain_prompts.get("general", "Extract all text and structured data.")
+        )
         
         prompt = f"""You are a document extraction expert. Extract all text from this document page.
 

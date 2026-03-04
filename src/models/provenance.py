@@ -1,19 +1,50 @@
 from typing import List, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class SourceCitation(BaseModel):
-    doc_name: str
-    page: int
-    bbox: Dict[str, float]
-    content_hash: str
-    confidence: float = Field(ge=0.0, le=1.0)
-    extraction_strategy: str
+    """Citation linking extracted content to source location"""
+    doc_name: str = Field(..., min_length=1, description="Source document name")
+    page: int = Field(..., ge=0, description="Page number (0-indexed)")
+    bbox: Dict[str, float] = Field(..., description="Bounding box coordinates")
+    content_hash: str = Field(..., min_length=16, max_length=16, description="Content hash for verification")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Extraction confidence")
+    extraction_strategy: str = Field(..., description="Strategy used: fast_text, layout_aware, vision_augmented")
+    
+    @field_validator('bbox')
+    @classmethod
+    def validate_bbox(cls, v):
+        """Ensure bbox has required coordinates"""
+        required = {'x0', 'y0', 'x1', 'y1'}
+        if not required.issubset(v.keys()):
+            raise ValueError(f"Bounding box must contain {required}")
+        if v['x1'] < v['x0'] or v['y1'] < v['y0']:
+            raise ValueError("Invalid bounding box coordinates")
+        return v
+    
+    @field_validator('extraction_strategy')
+    @classmethod
+    def validate_strategy(cls, v):
+        """Ensure valid extraction strategy"""
+        valid = {'fast_text', 'layout_aware', 'vision_augmented'}
+        if v not in valid:
+            raise ValueError(f"Strategy must be one of {valid}")
+        return v
 
 
 class ProvenanceChain(BaseModel):
-    claim: str
-    sources: List[SourceCitation]
-    verification_status: str = Field(description="verified, unverifiable, conflicting")
-    confidence: float = Field(ge=0.0, le=1.0)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    """Chain of evidence linking claims to source documents"""
+    claim: str = Field(..., min_length=1, description="Extracted claim or fact")
+    sources: List[SourceCitation] = Field(..., min_length=1, description="Supporting source citations")
+    verification_status: str = Field(..., description="verified, unverifiable, conflicting")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Overall confidence in claim")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
+    
+    @field_validator('verification_status')
+    @classmethod
+    def validate_status(cls, v):
+        """Ensure valid verification status"""
+        valid = {'verified', 'unverifiable', 'conflicting'}
+        if v not in valid:
+            raise ValueError(f"Status must be one of {valid}")
+        return v

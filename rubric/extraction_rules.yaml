@@ -1,53 +1,119 @@
 # Extraction Rules Configuration
 # Document Intelligence Refinery
+#
+# This configuration file externalizes all tunable parameters for the extraction pipeline.
+# New domains can be onboarded by editing this file without code changes.
+#
+# Configuration Sections:
+# 1. Confidence Thresholds - Control quality gates for each strategy
+# 2. Origin Detection - Parameters for classifying document source type
+# 3. Layout Complexity - Thresholds for layout classification
+# 4. Chunking Rules - Semantic chunking constitution
+# 5. Cost Limits - Budget caps and per-page costs
+# 6. Domain Keywords - Keywords for domain classification (extensible)
+# 7. Domain Prompts - Vision model prompts per domain (extensible)
+# 8. Escalation Rules - Automatic escalation behavior
 
-# Confidence Thresholds
+# ============================================================================
+# 1. CONFIDENCE THRESHOLDS
+# ============================================================================
+# These thresholds control quality gates for extraction strategies.
+# - fast_text_minimum: Minimum confidence for fast text extraction to be acceptable
+# - layout_aware_minimum: Minimum confidence for layout-aware extraction
+# - vision_minimum: Minimum confidence for vision-augmented extraction
+# - escalation_threshold: Trigger escalation if confidence falls below this
+#
 confidence:
-  fast_text_minimum: 0.7
-  layout_aware_minimum: 0.75
-  vision_minimum: 0.8
-  escalation_threshold: 0.7
+  fast_text_minimum: 0.7      # 70% confidence required
+  layout_aware_minimum: 0.75  # 75% confidence required
+  vision_minimum: 0.8         # 80% confidence required
+  escalation_threshold: 0.7   # Escalate if below 70%
 
-# Origin Type Detection
+# ============================================================================
+# 2. ORIGIN TYPE DETECTION
+# ============================================================================
+# Parameters for classifying whether document is native digital or scanned.
+# - min_char_density: Minimum characters per point² for native digital
+# - max_image_ratio: Maximum image-to-page ratio for native digital
+# - font_metadata_weight: Weight of font metadata presence in classification
+#
 origin_detection:
-  min_char_density: 0.01  # chars per point²
-  max_image_ratio: 0.5    # for native digital
-  font_metadata_weight: 0.3
+  min_char_density: 0.01   # chars per point²
+  max_image_ratio: 0.5     # 50% max for native digital
+  font_metadata_weight: 0.3  # 30% weight in decision
 
-# Layout Complexity
+# ============================================================================
+# 3. LAYOUT COMPLEXITY
+# ============================================================================
+# Thresholds for classifying document layout complexity.
+# - table_heavy_threshold: Number of tables to classify as table-heavy
+# - multi_column_threshold: Number of columns to classify as multi-column
+#
 layout:
-  table_heavy_threshold: 10  # number of tables
-  multi_column_threshold: 2   # number of columns
+  table_heavy_threshold: 10  # 10+ tables = table-heavy
+  multi_column_threshold: 2   # 2+ columns = multi-column
 
-# Chunking Rules (Constitution)
+# ============================================================================
+# 4. CHUNKING RULES (Constitution)
+# ============================================================================
+# Semantic chunking rules that preserve document structure.
+# These rules ensure LDUs maintain semantic coherence.
+# - max_tokens: Maximum tokens per chunk
+# - overlap_tokens: Token overlap between adjacent chunks
+# - rules: List of semantic preservation rules
+#
 chunking:
-  max_tokens: 512
-  overlap_tokens: 50
+  max_tokens: 512      # Maximum chunk size
+  overlap_tokens: 50   # Overlap for context preservation
   
   rules:
     - name: "table_integrity"
       description: "Table cells never split from headers"
+      priority: 1
       
     - name: "figure_caption_binding"
       description: "Figure captions stored as parent metadata"
+      priority: 2
       
     - name: "list_coherence"
       description: "Numbered lists kept as single LDU unless exceeds max_tokens"
+      priority: 3
       
     - name: "section_hierarchy"
       description: "Section headers stored as parent metadata on child chunks"
+      priority: 4
       
     - name: "cross_reference_resolution"
       description: "Cross-references resolved and stored as relationships"
+      priority: 5
 
-# Cost Limits
+# ============================================================================
+# 5. COST LIMITS
+# ============================================================================
+# Budget caps and per-page costs for each extraction strategy.
+# - max_per_document: Global budget cap per document (USD)
+# - vlm_budget_cap: Vision model specific budget cap per document (USD)
+# - fast_text_per_page: Cost per page for fast text extraction
+# - layout_aware_per_page: Cost per page for layout-aware extraction
+# - vision_per_page: Cost per page for vision-augmented extraction
+#
 cost:
-  max_per_document: 1.0  # USD
-  fast_text_per_page: 0.001
-  layout_aware_per_page: 0.01
-  vision_per_page: 0.02
+  max_per_document: 1.0    # $1.00 global cap
+  vlm_budget_cap: 1.0      # $1.00 vision model cap
+  fast_text_per_page: 0.001  # $0.001/page
+  layout_aware_per_page: 0.01  # $0.01/page
+  vision_per_page: 0.02    # $0.02/page
 
-# Domain Keywords
+# ============================================================================
+# 6. DOMAIN KEYWORDS (Extensible)
+# ============================================================================
+# Keywords for domain classification during triage.
+# To onboard a new domain:
+#   1. Add a new domain key (e.g., 'scientific')
+#   2. List relevant keywords
+#   3. Add corresponding entry in domain_prompts section
+#   4. Update DomainHint enum in src/models/document_profile.py
+#
 domain_keywords:
   financial:
     - revenue
@@ -58,6 +124,12 @@ domain_keywords:
     - fiscal
     - expenditure
     - budget
+    - earnings
+    - assets
+    - liabilities
+    - cbe
+    - bank
+    - annual
     
   legal:
     - contract
@@ -67,6 +139,9 @@ domain_keywords:
     - law
     - regulation
     - compliance
+    - litigation
+    - statute
+    - jurisdiction
     
   technical:
     - technical
@@ -75,6 +150,9 @@ domain_keywords:
     - system
     - architecture
     - implementation
+    - protocol
+    - algorithm
+    - infrastructure
     
   medical:
     - medical
@@ -83,3 +161,55 @@ domain_keywords:
     - diagnosis
     - pharmaceutical
     - health
+    - treatment
+    - therapy
+    - symptoms
+    
+  general:
+    - document
+    - report
+    - summary
+
+# ============================================================================
+# 7. DOMAIN-SPECIFIC EXTRACTION PROMPTS (Extensible)
+# ============================================================================
+# Vision model prompts tailored to each domain.
+# These prompts guide the vision model to extract domain-specific information.
+# To add a new domain prompt:
+#   1. Add domain key matching domain_keywords section
+#   2. Write extraction instructions specific to that domain
+#
+domain_prompts:
+  financial: "Focus on extracting financial data, tables, and numerical values with high precision. Preserve currency symbols and decimal places."
+  legal: "Extract all text preserving legal structure, clauses, and formatting. Maintain section numbering and hierarchical structure."
+  technical: "Extract technical specifications, diagrams descriptions, and structured data. Preserve code blocks and technical notation."
+  medical: "Extract medical information, patient data, and clinical findings carefully. Maintain medical terminology and abbreviations."
+  general: "Extract all text and structured data from this document. Preserve reading order and structure."
+
+# ============================================================================
+# 8. ESCALATION RULES
+# ============================================================================
+# Controls automatic escalation behavior when confidence is low.
+# - enabled: Master switch for escalation feature
+# - confidence_threshold: Escalate if confidence below this (should match confidence.escalation_threshold)
+# - max_attempts: Maximum number of escalation attempts
+# - strategy_order: Escalation path (strategies tried in order)
+# - force_escalation_if: Conditions that trigger immediate escalation
+#
+escalation:
+  enabled: true
+  confidence_threshold: 0.7  # Must match confidence.escalation_threshold
+  max_attempts: 3            # Maximum escalation attempts
+  
+  # Escalation path: strategies are tried in this order
+  strategy_order:
+    - fast_text
+    - layout_aware
+    - vision_augmented
+  
+  # Conditions that trigger immediate escalation (bypass initial strategy)
+  force_escalation_if:
+    scanned_image: true           # Always escalate scanned images
+    table_count_exceeds: 10       # Escalate if >10 tables detected
+    multi_column: true            # Escalate multi-column layouts
+    handwriting_detected: true    # Escalate if handwriting present

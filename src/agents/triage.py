@@ -1,8 +1,9 @@
 """Document classification and profiling agent with enterprise-level quality"""
 
 import json
+import yaml
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from ..models.document_profile import (
     DocumentProfile, OriginType, LayoutComplexity, 
     DomainHint, ExtractionCost
@@ -18,23 +19,28 @@ logger = get_logger("triage")
 class TriageAgent:
     """Document classification and profiling agent"""
     
-    FINANCIAL_KEYWORDS = ["revenue", "financial", "balance sheet", "income", "audit", 
-                          "fiscal", "annual", "report", "cbe", "bank", "expenditure", "budget"]
-    LEGAL_KEYWORDS = ["contract", "agreement", "legal", "court", "law", "regulation", "compliance"]
-    TECHNICAL_KEYWORDS = ["technical", "specification", "engineering", "system", "architecture", "implementation"]
-    MEDICAL_KEYWORDS = ["medical", "patient", "clinical", "diagnosis", "pharmaceutical", "health"]
-    
-    def __init__(self, output_dir: str = ".refinery/profiles"):
+    def __init__(self, output_dir: str = ".refinery/profiles", config_path: str = None):
         """
         Initialize triage agent
         
         Args:
             output_dir: Directory to save document profiles
+            config_path: Path to extraction_rules.yaml config file
         """
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.analyzer = PDFAnalyzer()
+        
+        # Load domain keywords from config
+        if config_path is None:
+            config_path = Path(__file__).parent.parent.parent / "rubric" / "extraction_rules.yaml"
+        
+        with open(config_path) as f:
+            config_data = yaml.safe_load(f)
+            self.domain_keywords = config_data['domain_keywords']
+        
         logger.info(f"Triage agent initialized with output_dir={output_dir}")
+        logger.debug(f"Loaded domain keywords for {len(self.domain_keywords)} domains")
     
     def profile_document(self, pdf_path: str) -> DocumentProfile:
         """
@@ -110,7 +116,7 @@ class TriageAgent:
     
     def _detect_domain(self, pdf_path: str) -> DomainHint:
         """
-        Simple keyword-based domain detection
+        Keyword-based domain detection using config
         
         Args:
             pdf_path: Path to PDF file
@@ -120,16 +126,20 @@ class TriageAgent:
         """
         filename_lower = Path(pdf_path).name.lower()
         
-        if any(kw in filename_lower for kw in self.FINANCIAL_KEYWORDS):
-            return DomainHint.FINANCIAL
-        elif any(kw in filename_lower for kw in self.LEGAL_KEYWORDS):
-            return DomainHint.LEGAL
-        elif any(kw in filename_lower for kw in self.TECHNICAL_KEYWORDS):
-            return DomainHint.TECHNICAL
-        elif any(kw in filename_lower for kw in self.MEDICAL_KEYWORDS):
-            return DomainHint.MEDICAL
-        else:
-            return DomainHint.GENERAL
+        # Check each domain's keywords from config
+        for domain, keywords in self.domain_keywords.items():
+            if any(kw.lower() in filename_lower for kw in keywords):
+                # Map config domain names to DomainHint enum
+                domain_map = {
+                    'financial': DomainHint.FINANCIAL,
+                    'legal': DomainHint.LEGAL,
+                    'technical': DomainHint.TECHNICAL,
+                    'medical': DomainHint.MEDICAL,
+                    'general': DomainHint.GENERAL
+                }
+                return domain_map.get(domain, DomainHint.GENERAL)
+        
+        return DomainHint.GENERAL
     
     def _estimate_extraction_cost(
         self, origin_type: str, layout_complexity: str, metrics: Dict
