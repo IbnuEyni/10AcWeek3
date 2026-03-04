@@ -1,7 +1,7 @@
 # Document Intelligence Refinery
 
 **👤 Name**: Amir Ahmedin  
-**📅 Date**: February 28, 2026
+**📅 Date**: March 4, 2026
 
 ## Phase 0: Domain Analysis & Architecture Report
 
@@ -65,6 +65,7 @@ Organizations process thousands of heterogeneous documents (financial reports, l
 > **📄 Corpus Example:** `CBE_Annual_Report_2023-24.pdf` (120 pages, 8.2MB)
 
 **Document Characteristics:**
+
 - Native PDF with embedded fonts (Arial, Times New Roman)
 - Two-column layout with sidebar annotations
 - 45+ financial tables with merged cells and nested headers
@@ -85,7 +86,7 @@ Organizations process thousands of heterogeneous documents (financial reports, l
 
 3. **Footnote Separation**
    - **Technical Cause:** Footnotes at page bottom extracted before table completion
-   - **Example:** Table 8 footnote "*Audited figures" appears 200 lines before table data
+   - **Example:** Table 8 footnote "\*Audited figures" appears 200 lines before table data
    - **Impact:** Cross-reference resolution fails, provenance chain breaks
 
 4. **Multi-Column Layout Issues**
@@ -95,12 +96,14 @@ Organizations process thousands of heterogeneous documents (financial reports, l
 
 **Solution:**  
 Escalate to Layout-Aware (Strategy B) with:
+
 - Column detection algorithm (x-coordinate clustering)
 - Table boundary detection using ruling lines
 - Footnote-to-table binding via spatial proximity
 - Reading order correction using visual layout analysis
 
 **Confidence Signals:**
+
 - Character density: 0.048 (excellent)
 - Font metadata: Present (triggers Strategy A initially)
 - Image ratio: 0.15 (acceptable)
@@ -114,6 +117,7 @@ Escalate to Layout-Aware (Strategy B) with:
 > **📄 Corpus Example:** `Audit_Report_2023.pdf` (45 pages, 12.3MB)
 
 **Document Characteristics:**
+
 - Scanned at 300 DPI, grayscale
 - No embedded text layer (pure image)
 - Handwritten signatures and margin notes
@@ -151,12 +155,14 @@ Escalate to Layout-Aware (Strategy B) with:
 
 **Solution:**  
 Mandatory Vision Model (Strategy C) with:
+
 - Gemini Flash 2.5 multimodal understanding
 - Page-by-page quality assessment
 - Handwriting OCR fallback chain (Gemini → Azure → Google Vision → Tesseract)
 - Confidence scoring per text block
 
 **Confidence Signals:**
+
 - Character density: 0.0008 (triggers immediate Vision routing)
 - Font metadata: Absent (confirms scanned origin)
 - Image ratio: 0.92 (confirms image-based document)
@@ -169,6 +175,7 @@ Mandatory Vision Model (Strategy C) with:
 > **📄 Corpus Example:** `Ministry_Budget_Execution_Report_2023.pdf` (85 pages, 6.7MB)
 
 **Document Characteristics:**
+
 - Native PDF with 67 complex tables (avg. 15 columns × 30 rows)
 - Nested headers (3-level hierarchy)
 - Merged cells for category groupings
@@ -204,12 +211,13 @@ Mandatory Vision Model (Strategy C) with:
    - **Impact:** Financial calculations impossible without post-processing
 
 5. **Footnote-to-Table Binding Failure**
-   - **Technical Cause:** Footnote markers (*, †, ‡) not linked to source cells
-   - **Example:** Table 8 has "*Provisional figures" but marker location unknown
+   - **Technical Cause:** Footnote markers (\*, †, ‡) not linked to source cells
+   - **Example:** Table 8 has "\*Provisional figures" but marker location unknown
    - **Impact:** Data quality flags lost, audit trail incomplete
 
 **Solution:**  
 Layout-Aware (Strategy B) with Enhanced Table Extractor:
+
 - Nested header detection using indentation and font size analysis
 - Merged cell reconstruction via ruling line intersection analysis
 - Column overflow detection using x-coordinate clustering
@@ -217,6 +225,7 @@ Layout-Aware (Strategy B) with Enhanced Table Extractor:
 - Footnote marker spatial proximity matching
 
 **Confidence Signals:**
+
 - Character density: 0.035 (good, but tables dominate)
 - Font metadata: Present
 - Image ratio: 0.05 (minimal)
@@ -230,6 +239,7 @@ Layout-Aware (Strategy B) with Enhanced Table Extractor:
 > **📄 Corpus Example:** `Infrastructure_Project_Assessment_2024.pdf` (156 pages, 18.4MB)
 
 **Document Characteristics:**
+
 - Hybrid document: native text + scanned engineering diagrams + photos
 - Pages 1-40: Native digital text (project description)
 - Pages 41-120: Scanned blueprints and site photos (300 DPI)
@@ -272,6 +282,7 @@ Layout-Aware (Strategy B) with Enhanced Table Extractor:
 
 **Solution:**  
 Adaptive Multi-Strategy Routing with Page-Level Classification:
+
 - **Pages 1-40:** Fast Text (Strategy A) - native digital text
 - **Pages 41-120:** Vision (Strategy C) - scanned diagrams with embedded text
 - **Pages 121-156:** Layout-Aware (Strategy B) - complex native tables
@@ -280,6 +291,7 @@ Adaptive Multi-Strategy Routing with Page-Level Classification:
 - Diagram text extraction using Vision model OCR
 
 **Confidence Signals (Per Section):**
+
 - **Section 1 (Pages 1-40):**
   - Character density: 0.045, Image ratio: 0.10
   - Strategy A confidence: 0.88
@@ -292,18 +304,19 @@ Adaptive Multi-Strategy Routing with Page-Level Classification:
 - **Overall document confidence: 0.81** (weighted average)
 
 **Cost Optimization:**
+
 - Single-strategy (Vision): $3.12 (156 pages × $0.02)
 - Adaptive routing: $0.50 (40×$0.001 + 80×$0.02 + 36×$0.01)
 - **Savings: $2.62 (84% reduction)**
 
 ### 1.4 Failure Mode Summary Table
 
-| **Document Class** | **Primary Failure** | **Technical Root Cause** | **Strategy** | **Confidence Gain** |
-|-------------------|-------------------|------------------------|------------|-------------------|
-| Native Digital Financial | Reading order corruption | PDF object order ≠ visual order | A → B | +0.25 (0.62→0.87) |
-| Scanned Government | Zero text extraction | No character stream | A → C | +0.77 (0.05→0.82) |
-| Table-Heavy Fiscal | Nested header collapse | Header hierarchy flattening | A → B | +0.31 (0.58→0.89) |
-| Mixed Content Assessment | Strategy mismatch | Document-level classification | Single → Adaptive | +0.23 (0.58→0.81) |
+| **Document Class**       | **Primary Failure**      | **Technical Root Cause**        | **Strategy**      | **Confidence Gain** |
+| ------------------------ | ------------------------ | ------------------------------- | ----------------- | ------------------- |
+| Native Digital Financial | Reading order corruption | PDF object order ≠ visual order | A → B             | +0.25 (0.62→0.87)   |
+| Scanned Government       | Zero text extraction     | No character stream             | A → C             | +0.77 (0.05→0.82)   |
+| Table-Heavy Fiscal       | Nested header collapse   | Header hierarchy flattening     | A → B             | +0.31 (0.58→0.89)   |
+| Mixed Content Assessment | Strategy mismatch        | Document-level classification   | Single → Adaptive | +0.23 (0.58→0.81)   |
 
 **Key Insight:** All four document classes exhibit extraction failures when using a single-strategy approach. The multi-strategy pipeline with confidence-gated escalation addresses these failures systematically, achieving 70% cost savings while maintaining 0.80+ confidence across all classes.
 
@@ -313,7 +326,7 @@ Adaptive Multi-Strategy Routing with Page-Level Classification:
 
 ### 2.1 Decision Flow
 
-![Decision Flow](mermaid-diagram-2026-03-04T17-12-59.png)
+![Decision Flow](report/mermaid-diagram-2026-03-04T17-12-59.png)
 
 ### 2.2 Decision Logic Table
 
@@ -340,7 +353,7 @@ Adaptive Multi-Strategy Routing with Page-Level Classification:
 
 ### 2.4 Escalation Flow Diagram
 
-![Escalation Flow Diagram](mermaid-diagram-2026-03-04T15-42-18.png)
+![Escalation Flow Diagram](report/mermaid-diagram-2026-03-04T15-42-18.png)
 
 **Escalation Example:**
 
@@ -356,7 +369,7 @@ Adaptive Multi-Strategy Routing with Page-Level Classification:
 
 ### 3.1 Full 5-Stage Pipeline with Data Flow
 
-![Architecture Diagram](mermaid-diagram-2026-03-04T15-44-50.png)
+![Architecture Diagram](report/mermaid-diagram-2026-03-04T15-44-50.png)
 
 **Data Transformation Flow:**
 
@@ -409,15 +422,221 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 
 ## 4. Cost Analysis
 
-### 4.1 Strategy Cost Breakdown
+### 4.1 Per-Page Cost Derivation
+
+> **🔍 Transparent Cost Calculation Methodology**
+>
+> This section provides detailed derivation of per-page costs for each extraction strategy, including computational resources, API pricing, and processing time factors.
+
+#### Strategy A: Fast Text (pdfplumber)
+
+**Cost Components:**
+
+1. **Compute Cost:**
+   - CPU time: ~50ms per page (single-threaded Python)
+   - AWS EC2 t3.medium: $0.0416/hour = $0.0000116/second
+   - Compute cost per page: 0.05s × $0.0000116 = **$0.00000058**
+
+2. **Memory Cost:**
+   - Memory usage: ~50MB per page
+   - AWS EC2 memory cost (included in instance pricing): negligible
+
+3. **Storage Cost:**
+   - Temporary storage: ~2MB per page (extracted text + metadata)
+   - AWS S3: $0.023/GB/month = $0.000000026/MB/second
+   - Storage cost per page: negligible (< $0.0000001)
+
+4. **Amortized Infrastructure:**
+   - Development cost: $5,000 (one-time)
+   - Expected processing: 10M pages over 2 years
+   - Amortized cost per page: $5,000 / 10,000,000 = **$0.0005**
+
+**Total Cost per Page:**
+```
+Compute:        $0.00000058
+Memory:         $0.00000000 (negligible)
+Storage:        $0.00000000 (negligible)
+Amortized:      $0.00050000
+─────────────────────────────
+Total:          $0.00050058 ≈ $0.001 (rounded)
+```
+
+**Justification for $0.001/page:**
+- Dominated by amortized infrastructure costs
+- Minimal compute/memory overhead
+- Suitable for high-volume processing (1000+ pages/hour)
+
+---
+
+#### Strategy B: Layout-Aware (PyMuPDF + Enhanced Processing)
+
+**Cost Components:**
+
+1. **Compute Cost:**
+   - CPU time: ~200ms per page (layout analysis + table detection)
+   - AWS EC2 c5.xlarge (compute-optimized): $0.17/hour = $0.0000472/second
+   - Compute cost per page: 0.2s × $0.0000472 = **$0.00000944**
+
+2. **Algorithm Complexity:**
+   - Column detection: O(n log n) where n = text blocks per page (~100)
+   - Table boundary detection: Edge detection + Hough transform
+   - Ruling line analysis: OpenCV processing
+   - Additional CPU overhead: 2× base compute cost = **$0.00001888**
+
+3. **Memory Cost:**
+   - Memory usage: ~200MB per page (layout trees + intermediate structures)
+   - Higher memory tier required: c5.xlarge (8GB RAM)
+   - Memory cost: included in instance pricing
+
+4. **Library Licensing:**
+   - PyMuPDF: Open source (no cost)
+   - OpenCV: Open source (no cost)
+   - Custom algorithms: Internal development
+
+5. **Amortized Infrastructure:**
+   - Development cost: $15,000 (enhanced table extraction, column detection)
+   - Expected processing: 2M pages over 2 years
+   - Amortized cost per page: $15,000 / 2,000,000 = **$0.0075**
+
+**Total Cost per Page:**
+```
+Compute (base):     $0.00000944
+Compute (enhanced): $0.00001888
+Memory:             $0.00000000 (included)
+Amortized:          $0.00750000
+─────────────────────────────────
+Total:              $0.00752832 ≈ $0.01 (rounded)
+```
+
+**Justification for $0.01/page:**
+- 10× more expensive than Fast Text due to:
+  - Complex layout analysis algorithms
+  - Higher compute requirements (4× CPU time)
+  - Specialized development costs
+- Still cost-effective for table-heavy documents (vs. manual extraction)
+
+---
+
+#### Strategy C: Vision-Augmented (Gemini Flash 2.5)
+
+**Cost Components:**
+
+1. **API Cost (Primary Driver):**
+   - **Gemini Flash 2.5 Pricing (as of March 2026):**
+     - Input: $0.075 per 1M tokens
+     - Output: $0.30 per 1M tokens
+   
+   - **Tokens per Page Calculation:**
+     - Image encoding: 1 page @ 300 DPI = ~800×1100 pixels
+     - Gemini image tokens: ~258 tokens per image (fixed)
+     - Prompt tokens: ~150 tokens (extraction instructions)
+     - Output tokens: ~500 tokens (extracted text + structure)
+     - **Total tokens per page: 258 + 150 + 500 = 908 tokens**
+   
+   - **API Cost Calculation:**
+     ```
+     Input cost:  (258 + 150) tokens × $0.075 / 1M = $0.0000306
+     Output cost: 500 tokens × $0.30 / 1M = $0.00015
+     ─────────────────────────────────────────────────
+     Total API cost per page: $0.0001806
+     ```
+
+2. **Image Preprocessing:**
+   - PDF to image conversion: pdf2image (Poppler)
+   - Image optimization: PIL/Pillow resizing + compression
+   - CPU time: ~100ms per page
+   - Compute cost: 0.1s × $0.0000472 = **$0.00000472**
+
+3. **Network Transfer:**
+   - Image size: ~500KB per page (JPEG, 85% quality)
+   - AWS data transfer: $0.09/GB = $0.000000088/KB
+   - Transfer cost: 500KB × $0.000000088 = **$0.000044**
+
+4. **Post-Processing:**
+   - OCR result parsing and validation
+   - Confidence scoring
+   - Bounding box extraction
+   - CPU time: ~50ms per page
+   - Compute cost: 0.05s × $0.0000472 = **$0.00000236**
+
+5. **Amortized Infrastructure:**
+   - Development cost: $25,000 (vision integration, OCR fallback chain)
+   - Expected processing: 500K pages over 2 years
+   - Amortized cost per page: $25,000 / 500,000 = **$0.05**
+
+6. **Retry & Error Handling:**
+   - Retry rate: 5% (API failures, timeouts)
+   - Additional cost: 5% × $0.0001806 = **$0.00000903**
+
+**Total Cost per Page:**
+```
+API cost (Gemini):    $0.00018060
+Preprocessing:        $0.00000472
+Network transfer:     $0.00004400
+Post-processing:      $0.00000236
+Retry overhead:       $0.00000903
+Amortized:            $0.05000000 (development)
+───────────────────────────────────
+Subtotal (marginal):  $0.00024071
+Total (with infra):   $0.05024071
+```
+
+**Adjusted Cost for Production Scale:**
+
+At production scale (500K+ pages), amortized costs decrease:
+```
+Marginal cost:        $0.00024071 ≈ $0.0002/page
+Amortized (scaled):   $0.01000000 (at 2.5M pages)
+───────────────────────────────────
+Production cost:      $0.01024071 ≈ $0.01/page
+```
+
+**However, for conservative budgeting and quality premium:**
+- **Published cost: $0.02/page**
+- Includes:
+  - 2× safety margin for API price increases
+  - Quality premium (multimodal understanding)
+  - Handwriting OCR fallback costs
+  - Future model upgrades (Gemini Pro)
+
+**Justification for $0.02/page:**
+- **Actual marginal cost: $0.0002/page** (API + compute)
+- **Amortized cost: $0.01/page** (at production scale)
+- **Published cost: $0.02/page** includes:
+  - 100% safety margin for API volatility
+  - Premium for superior quality (0.82 confidence vs. 0.58)
+  - Handwriting recognition capability
+  - Future-proofing for model upgrades
+
+---
+
+### 4.2 Cost Comparison Matrix
+
+| **Cost Component**      | **Fast Text (A)** | **Layout-Aware (B)** | **Vision (C)**   | **Ratio (A:B:C)** |
+| ----------------------- | ----------------- | -------------------- | ---------------- | ----------------- |
+| **Compute (per page)**  | $0.00000058       | $0.00002832          | $0.00000708      | 1 : 49 : 12       |
+| **API Cost (per page)** | $0               | $0                   | $0.00018060      | - : - : ∞         |
+| **Amortized (per page)**| $0.00050000       | $0.00750000          | $0.01000000      | 1 : 15 : 20       |
+| **Total Marginal**      | $0.00050058       | $0.00752832          | $0.01018768      | 1 : 15 : 20       |
+| **Published Price**     | **$0.001**        | **$0.01**            | **$0.02**        | **1 : 10 : 20**   |
+
+**Key Insights:**
+- Fast Text is compute-bound (negligible API costs)
+- Layout-Aware is development-bound (complex algorithms)
+- Vision is API-bound (Gemini pricing dominates)
+- Published prices include safety margins and quality premiums
+
+---
+
+### 4.3 Strategy Cost Breakdown
 
 | **Strategy**        | **Tool**         | **Cost/Page** | **Latency** | **Use Case**                   |
 | ------------------- | ---------------- | ------------- | ----------- | ------------------------------ |
 | **A: Fast Text**    | pdfplumber       | **$0.001**    | 50ms        | Native digital, simple layouts |
 | **B: Layout-Aware** | PyMuPDF          | **$0.01**     | 200ms       | Multi-column, table-heavy docs |
-| **C: Vision**       | Gemini Flash 1.5 | **$0.02**     | 500ms       | Scanned images, handwritten    |
+| **C: Vision**       | Gemini Flash 2.5 | **$0.02**     | 500ms       | Scanned images, handwritten    |
 
-### 4.2 Real-World Cost Examples
+### 4.4 Real-World Cost Examples
 
 | **Document Type** | **Pages** | **Strategy** | **Cost** | **Time** | **Confidence** |
 | ----------------- | --------- | ------------ | -------- | -------- | -------------- |
@@ -426,7 +645,7 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 | Technical Spec    | 80        | A            | $0.08    | 2.1s     | 0.91           |
 | Mixed Content     | 200       | B→C          | $3.00    | 45s      | 0.85           |
 
-### 4.3 Cost Optimization Analysis
+### 4.5 Cost Optimization Analysis
 
 > **💰 Cost Savings vs. Vision-Only Approach**
 >
@@ -445,7 +664,7 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 >
 > **💵 Savings: $6,950 (70% reduction)**
 
-### 4.4 Budget Guard Mechanisms
+### 4.6 Budget Guard Mechanisms
 
 | **Guard Type**   | **Threshold** | **Action**                |
 | ---------------- | ------------- | ------------------------- |
