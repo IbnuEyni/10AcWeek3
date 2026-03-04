@@ -156,11 +156,37 @@ graph TD
 > - **Cost Impact:** 10x increase per escalation
 > - **Quality Gain:** 25-30% confidence improvement
 
+### 2.4 Escalation Flow Diagram
+
+```mermaid
+graph LR
+    A[Strategy A: Fast Text<br/>$0.001/page] -->|Confidence < 0.7| B[Strategy B: Layout-Aware<br/>$0.01/page]
+    B -->|Confidence < 0.7| C[Strategy C: Vision<br/>$0.02/page]
+    C -->|Confidence < 0.7| D[Manual Review<br/>Flag Document]
+    
+    A -->|Confidence ≥ 0.7| E[Accept & Output]
+    B -->|Confidence ≥ 0.7| E
+    C -->|Confidence ≥ 0.7| E
+    
+    style A fill:#4CAF50
+    style B fill:#FF9800
+    style C fill:#F44336
+    style D fill:#9E9E9E
+    style E fill:#2196F3
+```
+
+**Escalation Example:**
+- Document starts with Strategy A (Fast Text)
+- Confidence score: 0.65 (below 0.7 threshold)
+- **Automatic escalation** to Strategy B (Layout-Aware)
+- New confidence score: 0.82 (above threshold)
+- **Result:** Accepted with 10x cost increase but 26% quality improvement
+
 ---
 
 ## 3. Architecture Diagram
 
-### 3.1 Full 5-Stage Pipeline
+### 3.1 Full 5-Stage Pipeline with Data Flow
 
 ```mermaid
 graph TB
@@ -204,24 +230,51 @@ graph TB
         S[Verified Answers with Provenance]
     end
     
-    A --> Stage1
-    Stage1 --> Stage2
-    Stage2 --> Stage3
-    Stage3 --> Stage4
-    Stage4 --> Stage5
-    Stage5 --> S
+    subgraph ErrorHandling[Error Handling]
+        ERR1[Validation Failed]
+        ERR2[Confidence Too Low]
+        ERR3[Budget Exceeded]
+        RETRY[Retry Queue]
+        MANUAL[Manual Review]
+    end
     
-    Stage1 -.-> T[DocumentProfile JSON]
-    Stage2 -.-> U[ExtractedDocument + Ledger]
-    Stage3 -.-> V[LDUs Chunks]
-    Stage4 -.-> W[PageIndex JSON]
+    A -->|Raw PDF| Stage1
+    Stage1 -->|DocumentProfile| Stage2
+    Stage1 -.->|Invalid Format| ERR1
+    
+    Stage2 -->|Text + Tables + Figures| Stage3
+    Stage2 -.->|Confidence < 0.5| ERR2
+    Stage2 -.->|Cost > $1| ERR3
+    
+    Stage3 -->|LDUs with Metadata| Stage4
+    Stage4 -->|PageIndex + Sections| Stage5
+    Stage5 -->|Answers + Sources| S
+    
+    ERR1 --> MANUAL
+    ERR2 --> RETRY
+    ERR3 --> MANUAL
+    RETRY -.->|Escalate| Stage2
+    
+    Stage1 -.->|Artifact| T[DocumentProfile JSON]
+    Stage2 -.->|Artifact| U[ExtractedDocument + Ledger]
+    Stage3 -.->|Artifact| V[LDUs Chunks]
+    Stage4 -.->|Artifact| W[PageIndex JSON]
     
     style Stage1 fill:#4CAF50
     style Stage2 fill:#4CAF50
     style Stage3 fill:#FFF3E0
     style Stage4 fill:#FFF3E0
     style Stage5 fill:#FFF3E0
+    style ErrorHandling fill:#FFEBEE
 ```
+
+**Data Transformation Flow:**
+1. **Input → Stage 1:** Raw PDF bytes → DocumentProfile (metadata, classification)
+2. **Stage 1 → Stage 2:** DocumentProfile → ExtractedDocument (text, tables, figures with bounding boxes)
+3. **Stage 2 → Stage 3:** ExtractedDocument → LDUs (semantically coherent chunks with relationships)
+4. **Stage 3 → Stage 4:** LDUs → PageIndex (hierarchical navigation tree with summaries)
+5. **Stage 4 → Stage 5:** PageIndex + LDUs → Query-ready vector store + fact tables
+6. **Stage 5 → Output:** Query → Verified answer with complete provenance chain
 
 ### 3.2 Pipeline Stages Detail
 
@@ -241,6 +294,24 @@ graph TB
 | Native digital, table-heavy | Table count > 10 | Layout-Aware (B) | Vision (C) |
 | Scanned image | Character density < 0.005 | Vision (C) | Manual Review |
 | Mixed content | Image ratio 0.3-0.7 | Layout-Aware (B) | Vision (C) |
+
+### 3.4 Error Handling & Recovery Paths
+
+| **Error Type** | **Detection** | **Recovery Action** | **Fallback** |
+|----------------|---------------|---------------------|---------------|
+| **Invalid PDF Format** | Stage 1: File validation fails | Log error, return 400 | Manual review queue |
+| **Confidence Too Low** | Stage 2: Score < 0.5 | Escalate to next strategy | Flag for review after 2 escalations |
+| **Budget Exceeded** | Stage 1: Estimated cost > $1 | Pause, request approval | Batch processing queue |
+| **Extraction Timeout** | Stage 2: Processing > 60s | Retry with timeout × 1.5 | Switch to faster strategy |
+| **Missing Content** | Stage 2: Empty extraction | Re-run with different strategy | Manual review |
+| **Corrupted Output** | Stage 2: Validation fails | Rollback, retry | Log and skip |
+
+**Recovery Flow:**
+```
+Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
+                                                    ↓ No
+                                            Escalate/Manual Review
+```
 
 ---
 
