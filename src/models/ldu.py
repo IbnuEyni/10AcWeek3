@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, field_validator, model_validator
 import hashlib
+from .extracted_document import BoundingBox
 
 
 class ChunkType(str, Enum):
@@ -19,7 +20,7 @@ class LDU(BaseModel):
     content: str = Field(..., min_length=1, description="Extracted text content")
     chunk_type: ChunkType
     page_refs: List[int] = Field(..., min_length=1, description="Pages this LDU spans")
-    bounding_boxes: List[Dict[str, float]] = Field(..., description="Spatial coordinates per page")
+    bounding_boxes: List[BoundingBox] = Field(..., description="Spatial coordinates per page")
     parent_section: Optional[str] = Field(None, description="Parent section ID for hierarchy")
     token_count: int = Field(..., gt=0, description="Approximate token count")
     content_hash: str = Field(..., min_length=16, max_length=16, description="SHA-256 hash (16 chars)")
@@ -41,17 +42,16 @@ class LDU(BaseModel):
     @field_validator('bounding_boxes')
     @classmethod
     def validate_bboxes(cls, v):
-        """Ensure bounding boxes have required keys"""
-        required_keys = {'x0', 'y0', 'x1', 'y1', 'page'}
+        """Validate bounding box coordinates"""
         for bbox in v:
-            if not required_keys.issubset(bbox.keys()):
-                raise ValueError(f"Bounding box must contain {required_keys}")
+            if bbox.x1 <= bbox.x0 or bbox.y1 <= bbox.y0:
+                raise ValueError("Invalid bounding box coordinates")
         return v
     
     @model_validator(mode='after')
     def validate_bbox_page_consistency(self):
         """Ensure bbox pages match page_refs"""
-        bbox_pages = {int(bbox['page']) for bbox in self.bounding_boxes}
+        bbox_pages = {bbox.page for bbox in self.bounding_boxes}
         if not bbox_pages.issubset(set(self.page_refs)):
             raise ValueError("Bounding box pages must be subset of page_refs")
         return self

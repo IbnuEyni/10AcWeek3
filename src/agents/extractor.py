@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Tuple
 from datetime import datetime
 from ..models.document_profile import DocumentProfile, ExtractionCost
-from ..models.extracted_document import ExtractedDocument
+from ..models.extracted_document import ExtractedDocument, EscalationHistory, EscalationAttempt
 from ..strategies import FastTextExtractor, LayoutExtractor, VisionExtractor
 from ..logging_config import get_logger
 from ..monitoring import metrics, PerformanceMonitor
@@ -42,6 +42,14 @@ class ExtractionRouter:
         monitor = PerformanceMonitor()
         logger.info(f"Starting extraction for {profile.doc_id}")
         
+        # Initialize escalation tracking
+        escalation_history = EscalationHistory(
+            attempts=[],
+            final_strategy="",
+            total_attempts=0,
+            escalation_triggered=False
+        )
+        
         # Select initial strategy
         strategy = self._select_strategy(profile)
         monitor.checkpoint("strategy_selected")
@@ -52,13 +60,26 @@ class ExtractionRouter:
             extracted_doc, confidence = strategy.extract(pdf_path, profile)
             monitor.checkpoint("extraction_complete")
             
+            # Record initial attempt
+            escalation_history.attempts.append(EscalationAttempt(
+                strategy=strategy.strategy_name,
+                confidence=confidence,
+                reason="initial_strategy",
+                timestamp=datetime.now().isoformat(),
+                cost_estimate=strategy.estimate_cost(profile)
+            ))
+            escalation_history.total_attempts = 1
+            
             # Escalation guard
-            escalated = False
             if confidence < self.CONFIDENCE_THRESHOLD:
                 logger.warning(f"Low confidence ({confidence:.2f}), escalating...")
-                extracted_doc, confidence = self._escalate(pdf_path, profile, strategy)
-                escalated = True
+                extracted_doc, confidence, escalation_history = self._escalate_with_history(
+                    pdf_path, profile, strategy, escalation_history
+                )
                 monitor.checkpoint("escalation_complete")
+            
+            escalation_history.final_strategy = strategy.strategy_name
+            extracted_doc.escalation_history = escalation_history
             
             # Calculate metrics
             processing_time = monitor.get_elapsed() * 1000
@@ -70,7 +91,7 @@ class ExtractionRouter:
                 cost=cost_estimate,
                 time_ms=processing_time,
                 success=True,
-                escalated=escalated
+                escalated=escalation_history.escalation_triggered
             )
             
             # Log to ledger
@@ -80,7 +101,7 @@ class ExtractionRouter:
                 confidence_score=confidence,
                 cost_estimate=cost_estimate,
                 processing_time_ms=processing_time,
-                escalation_triggered=escalated
+                escalation_triggered=escalation_history.escalation_triggered
             )
             
             logger.info(f"Extraction complete: {profile.doc_id} | {strategy.strategy_name} | "
@@ -108,11 +129,14 @@ class ExtractionRouter:
         else:  # NEEDS_VISION_MODEL
             return self.vision_extractor
     
-    def _escalate(self, pdf_path: str, profile: DocumentProfile, current_strategy) -> Tuple[ExtractedDocument, float]:
-        """Escalate to more powerful strategy based on config"""
+    def _escalate_with_history(self, pdf_path: str, profile: DocumentProfile, 
+                              current_strategy, history: EscalationHistory) -> tuple:
+        """Escalate with complete history tracking"""
         if not self.ESCALATION_ENABLED:
             logger.warning("Escalation disabled in config")
-            return current_strategy.extract(pdf_path, profile)
+            return current_strategy.extract(pdf_path, profile) + (history,)
+        
+        history.escalation_triggered = True
         
         # Get escalation path from config
         strategy_order = self.escalation_config['strategy_order']
@@ -121,18 +145,33 @@ class ExtractionRouter:
         # Check if we can escalate further
         if current_idx >= len(strategy_order) - 1:
             logger.warning(f"Already at highest strategy: {current_strategy.strategy_name}")
-            return current_strategy.extract(pdf_path, profile)
+            return current_strategy.extract(pdf_path, profile) + (history,)
         
         # Escalate to next strategy
         next_strategy_name = strategy_order[current_idx + 1]
         logger.info(f"Escalating from {current_strategy.strategy_name} to {next_strategy_name}")
         
         if next_strategy_name == "layout_aware":
-            return self.layout_extractor.extract(pdf_path, profile)
+            next_strategy = self.layout_extractor
         elif next_strategy_name == "vision_augmented":
-            return self.vision_extractor.extract(pdf_path, profile)
+            next_strategy = self.vision_extractor
         else:
-            return self.fast_extractor.extract(pdf_path, profile)
+            next_strategy = self.fast_extractor
+        
+        extracted_doc, confidence = next_strategy.extract(pdf_path, profile)
+        
+        # Record escalation attempt
+        history.attempts.append(EscalationAttempt(
+            strategy=next_strategy_name,
+            confidence=confidence,
+            reason=f"escalated_from_{current_strategy.strategy_name}_low_confidence",
+            timestamp=datetime.now().isoformat(),
+            cost_estimate=next_strategy.estimate_cost(profile)
+        ))
+        history.total_attempts += 1
+        history.final_strategy = next_strategy_name
+        
+        return extracted_doc, confidence, history
     
     def _log_extraction(
         self, profile: DocumentProfile, strategy_used: str,

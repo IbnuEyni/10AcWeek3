@@ -14,18 +14,21 @@ class TestTriageAgent:
     
     def test_domain_detection_financial(self, triage_agent):
         """Test financial domain detection"""
-        domain = triage_agent._detect_domain("CBE_Annual_Report_2023.pdf")
+        domain, confidence = triage_agent._detect_domain("CBE_Annual_Report_2023.pdf")
         assert domain == DomainHint.FINANCIAL
+        assert confidence > 0.5
     
     def test_domain_detection_legal(self, triage_agent):
         """Test legal domain detection"""
-        domain = triage_agent._detect_domain("legal_contract_agreement.pdf")
+        domain, confidence = triage_agent._detect_domain("legal_contract_agreement.pdf")
         assert domain == DomainHint.LEGAL
+        assert confidence > 0.5
     
     def test_domain_detection_technical(self, triage_agent):
         """Test technical domain detection"""
-        domain = triage_agent._detect_domain("technical_specification.pdf")
+        domain, confidence = triage_agent._detect_domain("technical_specification.pdf")
         assert domain == DomainHint.TECHNICAL
+        assert confidence > 0.5
     
     def test_extraction_cost_estimation_native(self, triage_agent):
         """Test cost estimation for native digital PDF"""
@@ -62,13 +65,14 @@ class TestPDFAnalyzer:
         """Test detection of native digital PDF"""
         from src.utils.pdf_analyzer import PDFAnalyzer
         
+        analyzer = PDFAnalyzer()
         metrics = {
             "character_density": 0.05,
             "has_font_metadata": True,
             "image_ratio": 0.2
         }
         
-        origin_type, confidence = PDFAnalyzer.detect_origin_type(metrics)
+        origin_type, confidence = analyzer.detect_origin_type(metrics)
         assert origin_type == "native_digital"
         assert confidence > 0.8
     
@@ -76,13 +80,14 @@ class TestPDFAnalyzer:
         """Test detection of scanned PDF"""
         from src.utils.pdf_analyzer import PDFAnalyzer
         
+        analyzer = PDFAnalyzer()
         metrics = {
             "character_density": 0.001,
             "has_font_metadata": False,
             "image_ratio": 0.9
         }
         
-        origin_type, confidence = PDFAnalyzer.detect_origin_type(metrics)
+        origin_type, confidence = analyzer.detect_origin_type(metrics)
         assert origin_type == "scanned_image"
         assert confidence > 0.7
     
@@ -90,17 +95,21 @@ class TestPDFAnalyzer:
         """Test detection of table-heavy layout"""
         from src.utils.pdf_analyzer import PDFAnalyzer
         
+        analyzer = PDFAnalyzer()
         metrics = {"table_count_estimate": 15}
-        complexity = PDFAnalyzer.detect_layout_complexity(metrics)
+        complexity, confidence = analyzer.detect_layout_complexity(metrics)
         assert complexity == "table_heavy"
+        assert confidence > 0.7
     
     def test_layout_complexity_detection_simple(self):
         """Test detection of simple layout"""
         from src.utils.pdf_analyzer import PDFAnalyzer
         
+        analyzer = PDFAnalyzer()
         metrics = {"table_count_estimate": 0}
-        complexity = PDFAnalyzer.detect_layout_complexity(metrics)
+        complexity, confidence = analyzer.detect_layout_complexity(metrics)
         assert complexity == "single_column"
+        assert confidence > 0.7
 
 
 class TestExtractionConfidence:
@@ -121,6 +130,9 @@ class TestExtractionConfidence:
             domain_hint=DomainHint.GENERAL,
             estimated_extraction_cost=ExtractionCost.FAST_TEXT_SUFFICIENT,
             total_pages=10,
+            origin_confidence=0.9,
+            layout_confidence=0.8,
+            domain_confidence=0.7,
             character_density=0.05,
             image_ratio=0.1,
             has_font_metadata=True,
@@ -146,6 +158,9 @@ class TestExtractionConfidence:
             domain_hint=DomainHint.GENERAL,
             estimated_extraction_cost=ExtractionCost.NEEDS_VISION_MODEL,
             total_pages=10,
+            origin_confidence=0.8,
+            layout_confidence=0.7,
+            domain_confidence=0.6,
             character_density=0.001,
             image_ratio=0.9,
             has_font_metadata=False,

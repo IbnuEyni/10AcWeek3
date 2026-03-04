@@ -29,15 +29,18 @@ class TriageAgent:
         """
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.analyzer = PDFAnalyzer()
         
-        # Load domain keywords from config
+        # Load config
         if config_path is None:
             config_path = Path(__file__).parent.parent.parent / "rubric" / "extraction_rules.yaml"
         
         with open(config_path) as f:
             config_data = yaml.safe_load(f)
             self.domain_keywords = config_data['domain_keywords']
+            self.origin_config = config_data['origin_detection']
+            self.layout_config = config_data['layout']
+        
+        self.analyzer = PDFAnalyzer(self.origin_config, self.layout_config)
         
         logger.info(f"Triage agent initialized with output_dir={output_dir}")
         logger.debug(f"Loaded domain keywords for {len(self.domain_keywords)} domains")
@@ -71,12 +74,12 @@ class TriageAgent:
             logger.debug(f"Origin type: {origin_type} (confidence: {origin_confidence:.2f})")
             
             # Classify layout complexity
-            layout_complexity = self.analyzer.detect_layout_complexity(metrics)
-            logger.debug(f"Layout complexity: {layout_complexity}")
+            layout_complexity, layout_confidence = self.analyzer.detect_layout_complexity(metrics)
+            logger.debug(f"Layout complexity: {layout_complexity} (confidence: {layout_confidence:.2f})")
             
             # Detect domain
-            domain_hint = self._detect_domain(str(path))
-            logger.debug(f"Domain hint: {domain_hint}")
+            domain_hint, domain_confidence = self._detect_domain(str(path))
+            logger.debug(f"Domain hint: {domain_hint} (confidence: {domain_confidence:.2f})")
             
             # Estimate extraction cost
             extraction_cost = self._estimate_extraction_cost(
@@ -95,6 +98,9 @@ class TriageAgent:
                 domain_hint=domain_hint,
                 estimated_extraction_cost=extraction_cost,
                 total_pages=metrics["total_pages"],
+                origin_confidence=origin_confidence,
+                layout_confidence=layout_confidence,
+                domain_confidence=domain_confidence,
                 character_density=metrics["character_density"],
                 image_ratio=metrics["image_ratio"],
                 has_font_metadata=metrics["has_font_metadata"],
@@ -114,7 +120,7 @@ class TriageAgent:
             logger.error(f"Unexpected error profiling document: {e}", exc_info=True)
             raise TriageError(f"Failed to profile document: {e}")
     
-    def _detect_domain(self, pdf_path: str) -> DomainHint:
+    def _detect_domain(self, pdf_path: str) -> tuple[DomainHint, float]:
         """
         Keyword-based domain detection using config
         
@@ -122,13 +128,14 @@ class TriageAgent:
             pdf_path: Path to PDF file
             
         Returns:
-            Domain classification
+            Tuple of (domain classification, confidence)
         """
         filename_lower = Path(pdf_path).name.lower()
         
         # Check each domain's keywords from config
         for domain, keywords in self.domain_keywords.items():
-            if any(kw.lower() in filename_lower for kw in keywords):
+            matches = sum(1 for kw in keywords if kw.lower() in filename_lower)
+            if matches > 0:
                 # Map config domain names to DomainHint enum
                 domain_map = {
                     'financial': DomainHint.FINANCIAL,
@@ -137,9 +144,10 @@ class TriageAgent:
                     'medical': DomainHint.MEDICAL,
                     'general': DomainHint.GENERAL
                 }
-                return domain_map.get(domain, DomainHint.GENERAL)
+                confidence = min(0.9, 0.5 + (matches * 0.1))  # 0.6-0.9 based on matches
+                return domain_map.get(domain, DomainHint.GENERAL), confidence
         
-        return DomainHint.GENERAL
+        return DomainHint.GENERAL, 0.5
     
     def _estimate_extraction_cost(
         self, origin_type: str, layout_complexity: str, metrics: Dict

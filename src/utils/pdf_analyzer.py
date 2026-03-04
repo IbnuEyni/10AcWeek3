@@ -13,8 +13,17 @@ logger = get_logger("pdf_analyzer")
 class PDFAnalyzer:
     """Analyze PDF characteristics for triage"""
     
-    MIN_CHAR_DENSITY = 0.01
-    MAX_IMAGE_RATIO = 0.5
+    def __init__(self, origin_config: dict = None, layout_config: dict = None):
+        """Initialize with config thresholds"""
+        self.origin_config = origin_config or {
+            'min_char_density': 0.01,
+            'max_image_ratio': 0.5,
+            'font_metadata_weight': 0.3
+        }
+        self.layout_config = layout_config or {
+            'table_heavy_threshold': 10,
+            'multi_column_threshold': 2
+        }
     
     @staticmethod
     def analyze_document(pdf_path: str) -> Dict[str, any]:
@@ -69,6 +78,13 @@ class PDFAnalyzer:
                         tables = page.find_tables()
                         table_count += len(tables)
                         
+                        # Form field detection
+                        form_fields = getattr(page, 'annots', []) or []
+                        has_form_fields = len(form_fields) > 0
+                        
+                        # Mixed mode detection (text + images)
+                        mixed_mode = char_density > 0 and image_ratio > 0.1
+                        
                     except Exception as e:
                         logger.warning(f"Error analyzing page {page_num}: {e}")
                         continue
@@ -83,7 +99,9 @@ class PDFAnalyzer:
                     "has_font_metadata": has_fonts,
                     "table_count_estimate": table_count,
                     "page_char_densities": char_counts,
-                    "page_image_ratios": image_ratios
+                    "page_image_ratios": image_ratios,
+                    "has_form_fields": any(getattr(page, 'annots', []) for page in pdf.pages),
+                    "is_mixed_mode": avg_char_density > 0 and avg_image_ratio > 0.1
                 }
                 
                 logger.info(f"Analysis complete: char_density={avg_char_density:.4f}, "
@@ -96,8 +114,7 @@ class PDFAnalyzer:
         except Exception as e:
             raise TriageError(f"Failed to analyze document: {e}")
     
-    @staticmethod
-    def detect_origin_type(metrics: Dict[str, any]) -> Tuple[str, float]:
+    def detect_origin_type(self, metrics: Dict[str, any]) -> Tuple[str, float]:
         """
         Detect if PDF is native digital or scanned
         
@@ -110,20 +127,31 @@ class PDFAnalyzer:
         char_density = metrics["character_density"]
         has_fonts = metrics["has_font_metadata"]
         image_ratio = metrics["image_ratio"]
+        has_form_fields = metrics.get("has_form_fields", False)
+        is_mixed_mode = metrics.get("is_mixed_mode", False)
         
         logger.debug(f"Detecting origin: char_density={char_density:.4f}, "
-                    f"has_fonts={has_fonts}, image_ratio={image_ratio:.2f}")
+                    f"has_fonts={has_fonts}, image_ratio={image_ratio:.2f}, "
+                    f"form_fields={has_form_fields}, mixed_mode={is_mixed_mode}")
         
-        if has_fonts and char_density > PDFAnalyzer.MIN_CHAR_DENSITY and \
-           image_ratio < PDFAnalyzer.MAX_IMAGE_RATIO:
+        # Form-fillable PDFs
+        if has_form_fields:
+            return "form_fillable", 0.85
+        
+        # Mixed mode PDFs
+        if is_mixed_mode and has_fonts:
+            return "mixed", 0.75
+        
+        # Standard classification
+        if has_fonts and char_density > self.origin_config['min_char_density'] and \
+           image_ratio < self.origin_config['max_image_ratio']:
             return "native_digital", 0.9
-        elif not has_fonts or char_density < PDFAnalyzer.MIN_CHAR_DENSITY / 2:
+        elif not has_fonts or char_density < self.origin_config['min_char_density'] / 2:
             return "scanned_image", 0.85
         else:
             return "mixed", 0.7
     
-    @staticmethod
-    def detect_layout_complexity(metrics: Dict[str, any]) -> str:
+    def detect_layout_complexity(self, metrics: Dict[str, any]) -> tuple[str, float]:
         """
         Detect layout complexity
         
@@ -131,13 +159,15 @@ class PDFAnalyzer:
             metrics: Analysis metrics from analyze_document
             
         Returns:
-            Layout complexity classification
+            Tuple of (layout complexity classification, confidence)
         """
         table_count = metrics["table_count_estimate"]
         
-        if table_count > 10:
-            return "table_heavy"
+        if table_count > self.layout_config['table_heavy_threshold']:
+            confidence = min(0.9, 0.7 + (table_count - self.layout_config['table_heavy_threshold']) * 0.02)
+            return "table_heavy", confidence
         elif table_count > 0:
-            return "mixed"
+            confidence = 0.7 + (table_count * 0.05)
+            return "mixed", min(confidence, 0.85)
         else:
-            return "single_column"
+            return "single_column", 0.8

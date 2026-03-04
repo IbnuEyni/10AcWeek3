@@ -77,24 +77,26 @@ class TestEdgeCases:
     
     def test_zero_area_page(self):
         """Test handling of page with zero area"""
+        analyzer = PDFAnalyzer()
         metrics = {
             "character_density": 0.0,
             "has_font_metadata": False,
             "image_ratio": 0.0
         }
         
-        origin, confidence = PDFAnalyzer.detect_origin_type(metrics)
+        origin, confidence = analyzer.detect_origin_type(metrics)
         assert origin == "scanned_image"
     
     def test_all_images_page(self):
         """Test page that is 100% images"""
+        analyzer = PDFAnalyzer()
         metrics = {
             "character_density": 0.0,
             "has_font_metadata": False,
             "image_ratio": 1.0
         }
         
-        origin, confidence = PDFAnalyzer.detect_origin_type(metrics)
+        origin, confidence = analyzer.detect_origin_type(metrics)
         assert origin == "scanned_image"
         assert confidence > 0.7
 

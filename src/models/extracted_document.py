@@ -34,6 +34,23 @@ class Figure(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
+class EscalationAttempt(BaseModel):
+    """Record of a single escalation attempt"""
+    strategy: str
+    confidence: float = Field(ge=0.0, le=1.0)
+    reason: str
+    timestamp: str
+    cost_estimate: float = Field(ge=0.0)
+
+
+class EscalationHistory(BaseModel):
+    """Complete escalation history for a document"""
+    attempts: List[EscalationAttempt] = Field(default_factory=list)
+    final_strategy: str
+    total_attempts: int = Field(ge=0)
+    escalation_triggered: bool = Field(default=False)
+    
+
 class ExtractedDocument(BaseModel):
     doc_id: str
     filename: str
@@ -44,3 +61,4 @@ class ExtractedDocument(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
     extraction_strategy: str
     confidence_score: float = Field(ge=0.0, le=1.0)
+    escalation_history: Optional[EscalationHistory] = Field(None, description="Complete escalation audit trail")

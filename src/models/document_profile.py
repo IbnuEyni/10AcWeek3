@@ -43,6 +43,11 @@ class DocumentProfile(BaseModel):
     estimated_extraction_cost: ExtractionCost
     total_pages: int
     
+    # Classification confidence scores
+    origin_confidence: float = Field(ge=0.0, le=1.0, description="Confidence in origin type classification")
+    layout_confidence: float = Field(ge=0.0, le=1.0, description="Confidence in layout complexity classification")
+    domain_confidence: float = Field(ge=0.0, le=1.0, description="Confidence in domain classification")
+    
     # Confidence metrics
     character_density: float = Field(description="Average chars per page area")
     image_ratio: float = Field(ge=0.0, le=1.0, description="Image area / total area")

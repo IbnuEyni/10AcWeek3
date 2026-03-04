@@ -1,5 +1,6 @@
-from typing import List, Dict, Any
-from pydantic import BaseModel, Field, field_validator
+from typing import List, Dict, Any, Optional
+from pydantic import BaseModel, Field, field_validator, model_validator
+from .extracted_document import BoundingBox
 
 
 class SourceCitation(BaseModel):
@@ -38,6 +39,7 @@ class ProvenanceChain(BaseModel):
     sources: List[SourceCitation] = Field(..., min_length=1, description="Supporting source citations")
     verification_status: str = Field(..., description="verified, unverifiable, conflicting")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Overall confidence in claim")
+    aggregated_bbox: Optional[BoundingBox] = Field(None, description="Aggregated bounding box from all sources")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
     
     @field_validator('verification_status')
@@ -48,3 +50,20 @@ class ProvenanceChain(BaseModel):
         if v not in valid:
             raise ValueError(f"Status must be one of {valid}")
         return v
+    
+    @model_validator(mode='after')
+    def compute_aggregated_bbox(self):
+        """Compute aggregated bounding box from sources if not provided"""
+        if self.aggregated_bbox is None and self.sources:
+            # Aggregate bounding boxes from all sources
+            min_x0 = min(s.bbox['x0'] for s in self.sources)
+            min_y0 = min(s.bbox['y0'] for s in self.sources)
+            max_x1 = max(s.bbox['x1'] for s in self.sources)
+            max_y1 = max(s.bbox['y1'] for s in self.sources)
+            # Use page from first source
+            page = self.sources[0].page
+            
+            self.aggregated_bbox = BoundingBox(
+                x0=min_x0, y0=min_y0, x1=max_x1, y1=max_y1, page=page
+            )
+        return self
