@@ -1,5 +1,8 @@
 # Document Intelligence Refinery
 
+**👤 Name**: Amir Ahmedin  
+**📅 Date**: February 28, 2026
+
 ## Phase 0: Domain Analysis & Architecture Report
 
 **Enterprise-Grade Agentic Pipeline for Document Extraction**
@@ -103,36 +106,7 @@ Mandatory vision model (Strategy C) with page-by-page quality assessment and con
 
 ### 2.1 Decision Flow
 
-```mermaid
-graph TD
-    A[Document Input] --> B{Font Metadata?}
-    B -->|Yes| C{Char Density > 0.01?}
-    B -->|No| E[Scanned]
-    C -->|Yes| D{Image Ratio < 0.5?}
-    C -->|No| E
-    D -->|Yes| F{Layout?}
-    D -->|No| G[Mixed]
-    F -->|Simple| H[Strategy A]
-    F -->|Complex| I[Strategy B]
-    E --> J[Strategy C]
-    G --> I
-    
-    H --> K{Conf > 0.7?}
-    I --> L{Conf > 0.7?}
-    J --> M{Conf > 0.7?}
-    
-    K -->|No| I
-    L -->|No| J
-    K -->|Yes| N[Output]
-    L -->|Yes| N
-    M -->|Yes| N
-    M -->|No| O[Review]
-    
-    style H fill:#4CAF50
-    style I fill:#FF9800
-    style J fill:#F44336
-    style N fill:#2196F3
-```
+![Decision Flow](mermaid-diagram-2026-03-04T17-12-59.png)
 
 ### 2.2 Decision Logic Table
 
@@ -159,22 +133,7 @@ graph TD
 
 ### 2.4 Escalation Flow Diagram
 
-```mermaid
-graph LR
-    A[Strategy A: Fast Text<br/>$0.001/page] -->|Confidence < 0.7| B[Strategy B: Layout-Aware<br/>$0.01/page]
-    B -->|Confidence < 0.7| C[Strategy C: Vision<br/>$0.02/page]
-    C -->|Confidence < 0.7| D[Manual Review<br/>Flag Document]
-    
-    A -->|Confidence ≥ 0.7| E[Accept & Output]
-    B -->|Confidence ≥ 0.7| E
-    C -->|Confidence ≥ 0.7| E
-    
-    style A fill:#4CAF50
-    style B fill:#FF9800
-    style C fill:#F44336
-    style D fill:#9E9E9E
-    style E fill:#2196F3
-```
+![Escalation Flow Diagram](mermaid-diagram-2026-03-04T15-42-18.png)
 
 **Escalation Example:**
 
@@ -371,7 +330,3 @@ The Document Intelligence Refinery represents a production-grade solution to ent
 > _Ready for Stages 3-5 implementation to achieve full query interface with provenance_
 
 ---
-
-**Repository:** https://github.com/your-org/document-intelligence-refinery  
-**Documentation:** See `COMPREHENSIVE_PROJECT_EXPLANATION.md`  
-**Contact:** Foundational Data Engineering Team
