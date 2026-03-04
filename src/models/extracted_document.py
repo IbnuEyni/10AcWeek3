@@ -26,10 +26,12 @@ class Table(BaseModel):
 
 
 class Figure(BaseModel):
-    caption: str
+    figure_id: str
     bbox: BoundingBox
-    figure_id: Optional[str] = None
+    caption: Optional[str] = None
     image_path: Optional[str] = None
+    page: int
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
 class ExtractedDocument(BaseModel):
