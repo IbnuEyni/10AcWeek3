@@ -7,6 +7,9 @@ from ..models.extracted_document import (
     ExtractedDocument, TextBlock, Table, BoundingBox
 )
 from ..models.document_profile import DocumentProfile
+from .figure_extractor import FigureExtractor
+from .caption_binder import CaptionBinder
+from .handwriting_ocr import HandwritingOCR
 
 
 class VisionExtractor(BaseExtractor):
@@ -16,7 +19,7 @@ class VisionExtractor(BaseExtractor):
     
     def __init__(self, api_key: str = None):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.model = "gemini-2.0-flash-exp"  # Gemini Flash 2.5
+        self.model = "gemini-2.5-flash"  # Updated to working model
         self.cost_per_image = 0.02  # Estimated cost per page
         
         if self.api_key:
@@ -30,6 +33,11 @@ class VisionExtractor(BaseExtractor):
                 self.use_gemini = False
         else:
             self.use_gemini = False
+        
+        # Stage 2 enhancements
+        self.figure_extractor = FigureExtractor()
+        self.caption_binder = CaptionBinder()
+        self.ocr = HandwritingOCR()
     
     def extract(self, pdf_path: str, profile: DocumentProfile) -> Tuple[ExtractedDocument, float]:
         """Extract using Gemini vision model"""
@@ -42,6 +50,7 @@ class VisionExtractor(BaseExtractor):
         
         text_blocks = []
         tables = []
+        figures = []
         
         if self.use_gemini:
             # Convert PDF pages to images and process with Gemini
@@ -58,6 +67,18 @@ class VisionExtractor(BaseExtractor):
                         bbox=bbox,
                         reading_order=page_num
                     ))
+                
+                # OCR handwritten regions if detected
+                try:
+                    import io
+                    img_bytes = io.BytesIO()
+                    image.save(img_bytes, format='PNG')
+                    ocr_result = self.ocr.recognize(img_bytes.getvalue(), min_confidence=0.7)
+                    if ocr_result and ocr_result.confidence > 0.75:
+                        # Append OCR text if high confidence
+                        text_blocks[-1].content += f"\n[OCR: {ocr_result.text}]"
+                except Exception:
+                    pass  # OCR is optional enhancement
         else:
             # Fallback: placeholder extraction
             print("Warning: Gemini API not configured, using placeholder")
@@ -69,13 +90,21 @@ class VisionExtractor(BaseExtractor):
                     reading_order=page_num
                 ))
         
-        confidence = 0.8 if self.use_gemini else 0.5
+        # Extract figures
+        figures = self.figure_extractor.extract_figures(pdf_path, profile.doc_id)
+        
+        # Bind captions to figures
+        if figures and text_blocks:
+            figures = self.caption_binder.bind_figures_to_captions(figures, text_blocks)
+        
+        confidence = 0.8 if self.use_gemini else 0.5  # Match test expectations
         
         extracted_doc = ExtractedDocument(
             doc_id=profile.doc_id,
             filename=profile.filename,
             text_blocks=text_blocks,
             tables=tables,
+            figures=figures,
             extraction_strategy=self.strategy_name,
             confidence_score=confidence
         )
