@@ -1,4 +1,5 @@
 # Document Intelligence Refinery
+
 ## Phase 0: Domain Analysis & Architecture Report
 
 **Enterprise-Grade Agentic Pipeline for Document Extraction**
@@ -9,16 +10,13 @@
 
 This report presents a comprehensive domain analysis for an enterprise-grade document intelligence system. The solution implements a multi-strategy extraction pipeline with confidence-gated escalation, achieving **54% completion** with production-ready quality. Key innovations include cost-aware processing ($0.001-$0.02/page), spatial provenance tracking, and intelligent routing across three extraction strategies.
 
-| **Metric** | **Value** |
-|------------|-----------|
+| **Metric**         | **Value**                         |
+| ------------------ | --------------------------------- |
 | Project Completion | 54% (Stages 1-2 + Infrastructure) |
-| Test Coverage | 71 tests, 100% passing |
-| Code Quality | Production-ready, fully typed |
-| Cost Efficiency | 70% savings vs. vision-only |
-| Processing Speed | 50ms-500ms per page |
-
-**Foundational Data Engineering Team**  
-*Production-Ready Implementation*
+| Test Coverage      | 71 tests, 100% passing            |
+| Code Quality       | Production-ready, fully typed     |
+| Cost Efficiency    | 70% savings vs. vision-only       |
+| Processing Speed   | 50ms-500ms per page               |
 
 ---
 
@@ -42,7 +40,7 @@ This report presents a comprehensive domain analysis for an enterprise-grade doc
 Organizations process thousands of heterogeneous documents (financial reports, legal contracts, medical records) locked in unstructured formats. Traditional extraction methods fail due to:
 
 - **Structure Collapse**: Multi-column layouts become jumbled text
-- **Context Poverty**: Tables split across chunks, figures lose captions  
+- **Context Poverty**: Tables split across chunks, figures lose captions
 - **Provenance Blindness**: No audit trail for extracted facts
 
 **Market Validation:**  
@@ -50,12 +48,12 @@ Organizations process thousands of heterogeneous documents (financial reports, l
 
 ### 1.2 Document Classification Taxonomy
 
-| **Class** | **Characteristics** | **Strategy** | **Confidence** |
-|-----------|---------------------|--------------|----------------|
-| **Native Digital** | Character density > 0.01<br/>Font metadata present | Fast Text (A) | 0.85-0.95 |
-| **Scanned Image** | Character density < 0.005<br/>No font metadata | Vision (C) | 0.75-0.85 |
-| **Table-Heavy** | Table count > 10<br/>Multi-column layout | Layout-Aware (B) | 0.80-0.90 |
-| **Mixed Content** | Hybrid characteristics | Adaptive Routing | 0.70-0.85 |
+| **Class**          | **Characteristics**                                | **Strategy**     | **Confidence** |
+| ------------------ | -------------------------------------------------- | ---------------- | -------------- |
+| **Native Digital** | Character density > 0.01<br/>Font metadata present | Fast Text (A)    | 0.85-0.95      |
+| **Scanned Image**  | Character density < 0.005<br/>No font metadata     | Vision (C)       | 0.75-0.85      |
+| **Table-Heavy**    | Table count > 10<br/>Multi-column layout           | Layout-Aware (B) | 0.80-0.90      |
+| **Mixed Content**  | Hybrid characteristics                             | Adaptive Routing | 0.70-0.85      |
 
 ### 1.3 Failure Modes Analysis
 
@@ -64,6 +62,7 @@ Organizations process thousands of heterogeneous documents (financial reports, l
 > **📄 Document:** CBE Annual Report 2023-24 (120 pages)
 
 **Observed Failures:**
+
 - Multi-column layouts cause reading order corruption
 - Financial tables with merged cells lose structure
 - Footnotes separated from parent tables
@@ -73,6 +72,7 @@ Organizations process thousands of heterogeneous documents (financial reports, l
 Layout-aware extraction (Strategy B) with table boundary detection and cross-reference resolver.
 
 **Confidence Signals:**
+
 - Character density: 0.04-0.06 (good)
 - Font metadata: Present
 - Image ratio: 0.1-0.3 (acceptable)
@@ -83,6 +83,7 @@ Layout-aware extraction (Strategy B) with table boundary detection and cross-ref
 > **📄 Document:** Audit Report - 2023.pdf (45 pages)
 
 **Observed Failures:**
+
 - No character stream (pure image)
 - OCR quality varies by page
 - Handwritten signatures/annotations
@@ -92,12 +93,11 @@ Layout-aware extraction (Strategy B) with table boundary detection and cross-ref
 Mandatory vision model (Strategy C) with page-by-page quality assessment and confidence scoring.
 
 **Confidence Signals:**
+
 - Character density: < 0.001 (triggers vision)
 - Font metadata: Absent
 - Image ratio: > 0.8
 - **Expected confidence: 0.75-0.85**
-
----
 
 ## 2. Extraction Strategy Decision Tree
 
@@ -107,44 +107,45 @@ Mandatory vision model (Strategy C) with page-by-page quality assessment and con
 graph TD
     A[Document Input] --> B{Font Metadata?}
     B -->|Yes| C{Char Density > 0.01?}
-    B -->|No| D[Strategy C: Vision]
-    C -->|Yes| E{Image Ratio < 0.5?}
-    C -->|No| D
-    E -->|Yes| F{Layout Complex?}
-    E -->|No| G[Strategy B: Layout-Aware]
-    F -->|Simple| H[Strategy A: Fast Text]
-    F -->|Complex| G
+    B -->|No| E[Scanned]
+    C -->|Yes| D{Image Ratio < 0.5?}
+    C -->|No| E
+    D -->|Yes| F{Layout?}
+    D -->|No| G[Mixed]
+    F -->|Simple| H[Strategy A]
+    F -->|Complex| I[Strategy B]
+    E --> J[Strategy C]
+    G --> I
     
-    H --> I{Confidence > 0.7?}
-    G --> J{Confidence > 0.7?}
-    D --> K{Confidence > 0.7?}
+    H --> K{Conf > 0.7?}
+    I --> L{Conf > 0.7?}
+    J --> M{Conf > 0.7?}
     
-    I -->|No| G
-    J -->|No| D
-    K -->|No| L[Flag for Review]
-    
-    I -->|Yes| M[Structured Output]
-    J -->|Yes| M
-    K -->|Yes| M
+    K -->|No| I
+    L -->|No| J
+    K -->|Yes| N[Output]
+    L -->|Yes| N
+    M -->|Yes| N
+    M -->|No| O[Review]
     
     style H fill:#4CAF50
-    style G fill:#FF9800
-    style D fill:#F44336
-    style M fill:#4CAF50
+    style I fill:#FF9800
+    style J fill:#F44336
+    style N fill:#2196F3
 ```
 
 ### 2.2 Decision Logic Table
 
-| **Decision Point** | **Condition** | **Action** |
-|-------------------|---------------|------------|
-| Font Metadata | Present | Check character density |
-| Font Metadata | Absent | Route to Vision (C) |
-| Character Density | > 0.01 | Check image ratio |
-| Character Density | < 0.01 | Route to Vision (C) |
-| Image Ratio | < 0.5 | Check layout complexity |
-| Image Ratio | > 0.5 | Route to Layout-Aware (B) |
-| Layout Complexity | Simple | Route to Fast Text (A) |
-| Layout Complexity | Complex | Route to Layout-Aware (B) |
+| **Decision Point** | **Condition** | **Action**                |
+| ------------------ | ------------- | ------------------------- |
+| Font Metadata      | Present       | Check character density   |
+| Font Metadata      | Absent        | Route to Vision (C)       |
+| Character Density  | > 0.01        | Check image ratio         |
+| Character Density  | < 0.01        | Route to Vision (C)       |
+| Image Ratio        | < 0.5         | Check layout complexity   |
+| Image Ratio        | > 0.5         | Route to Layout-Aware (B) |
+| Layout Complexity  | Simple        | Route to Fast Text (A)    |
+| Layout Complexity  | Complex       | Route to Layout-Aware (B) |
 
 ### 2.3 Key Innovation: Confidence-Gated Escalation
 
@@ -176,6 +177,7 @@ graph LR
 ```
 
 **Escalation Example:**
+
 - Document starts with Strategy A (Fast Text)
 - Confidence score: 0.65 (below 0.7 threshold)
 - **Automatic escalation** to Strategy B (Layout-Aware)
@@ -188,87 +190,10 @@ graph LR
 
 ### 3.1 Full 5-Stage Pipeline with Data Flow
 
-```mermaid
-graph TB
-    subgraph Input
-        A[PDFs, Images, Scans]
-    end
-    
-    subgraph Stage1[STAGE 1: Document Triage Agent ✅]
-        B[Origin Type Detection]
-        C[Layout Complexity Analysis]
-        D[Domain Classification]
-        E[Cost Estimation]
-    end
-    
-    subgraph Stage2[STAGE 2: Structure Extraction Layer ✅]
-        F[Multi-Strategy Routing]
-        G[Enhanced Table Extraction]
-        H[Figure Extraction]
-        I[Confidence Scoring]
-    end
-    
-    subgraph Stage3[STAGE 3: Semantic Chunking Engine ⏳]
-        J[Logical Document Units]
-        K[5 Chunking Rules]
-        L[Cross-Reference Resolution]
-    end
-    
-    subgraph Stage4[STAGE 4: PageIndex Builder ⏳]
-        M[Section Hierarchy]
-        N[Entity Extraction]
-        O[LLM Summaries]
-    end
-    
-    subgraph Stage5[STAGE 5: Query Interface Agent ⏳]
-        P[Vector Store]
-        Q[FactTable SQL]
-        R[ProvenanceChain]
-    end
-    
-    subgraph Output
-        S[Verified Answers with Provenance]
-    end
-    
-    subgraph ErrorHandling[Error Handling]
-        ERR1[Validation Failed]
-        ERR2[Confidence Too Low]
-        ERR3[Budget Exceeded]
-        RETRY[Retry Queue]
-        MANUAL[Manual Review]
-    end
-    
-    A -->|Raw PDF| Stage1
-    Stage1 -->|DocumentProfile| Stage2
-    Stage1 -.->|Invalid Format| ERR1
-    
-    Stage2 -->|Text + Tables + Figures| Stage3
-    Stage2 -.->|Confidence < 0.5| ERR2
-    Stage2 -.->|Cost > $1| ERR3
-    
-    Stage3 -->|LDUs with Metadata| Stage4
-    Stage4 -->|PageIndex + Sections| Stage5
-    Stage5 -->|Answers + Sources| S
-    
-    ERR1 --> MANUAL
-    ERR2 --> RETRY
-    ERR3 --> MANUAL
-    RETRY -.->|Escalate| Stage2
-    
-    Stage1 -.->|Artifact| T[DocumentProfile JSON]
-    Stage2 -.->|Artifact| U[ExtractedDocument + Ledger]
-    Stage3 -.->|Artifact| V[LDUs Chunks]
-    Stage4 -.->|Artifact| W[PageIndex JSON]
-    
-    style Stage1 fill:#4CAF50
-    style Stage2 fill:#4CAF50
-    style Stage3 fill:#FFF3E0
-    style Stage4 fill:#FFF3E0
-    style Stage5 fill:#FFF3E0
-    style ErrorHandling fill:#FFEBEE
-```
+![Architecture Diagram](mermaid-diagram-2026-03-04T15-44-50.png)
 
 **Data Transformation Flow:**
+
 1. **Input → Stage 1:** Raw PDF bytes → DocumentProfile (metadata, classification)
 2. **Stage 1 → Stage 2:** DocumentProfile → ExtractedDocument (text, tables, figures with bounding boxes)
 3. **Stage 2 → Stage 3:** ExtractedDocument → LDUs (semantically coherent chunks with relationships)
@@ -278,35 +203,36 @@ graph TB
 
 ### 3.2 Pipeline Stages Detail
 
-| **Stage** | **Description** | **Status** |
-|-----------|-----------------|------------|
-| **Stage 1: Triage Agent** | • Origin type detection (digital/scanned)<br/>• Layout complexity analysis<br/>• Domain classification (financial/legal/technical)<br/>• Cost estimation & strategy recommendation | ✅ 100% |
-| **Stage 2: Extraction Layer** | • Multi-strategy routing (Fast/Layout/Vision)<br/>• Enhanced table extraction (merged cells)<br/>• Figure extraction with captions<br/>• Multi-column layout correction<br/>• Confidence scoring & escalation | ✅ 100% |
-| **Stage 3: Semantic Chunking** | • Logical Document Units (LDUs)<br/>• 5 chunking rules (table integrity, caption binding)<br/>• Cross-reference resolution<br/>• Content hash generation | ⏳ TODO |
-| **Stage 4: PageIndex Builder** | • Section hierarchy detection<br/>• Entity extraction (people, dates, money)<br/>• LLM-generated summaries<br/>• Navigation tree construction | ⏳ TODO |
-| **Stage 5: Query Interface** | • Vector store (semantic search)<br/>• FactTable (SQL queries)<br/>• ProvenanceChain (audit trail)<br/>• LangGraph orchestration | ⏳ TODO |
+| **Stage**                      | **Description**                                                                                                                                                                                               | **Status** |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| **Stage 1: Triage Agent**      | • Origin type detection (digital/scanned)<br/>• Layout complexity analysis<br/>• Domain classification (financial/legal/technical)<br/>• Cost estimation & strategy recommendation                            | ✅ 100%    |
+| **Stage 2: Extraction Layer**  | • Multi-strategy routing (Fast/Layout/Vision)<br/>• Enhanced table extraction (merged cells)<br/>• Figure extraction with captions<br/>• Multi-column layout correction<br/>• Confidence scoring & escalation | ✅ 100%    |
+| **Stage 3: Semantic Chunking** | • Logical Document Units (LDUs)<br/>• 5 chunking rules (table integrity, caption binding)<br/>• Cross-reference resolution<br/>• Content hash generation                                                      | ⏳ TODO    |
+| **Stage 4: PageIndex Builder** | • Section hierarchy detection<br/>• Entity extraction (people, dates, money)<br/>• LLM-generated summaries<br/>• Navigation tree construction                                                                 | ⏳ TODO    |
+| **Stage 5: Query Interface**   | • Vector store (semantic search)<br/>• FactTable (SQL queries)<br/>• ProvenanceChain (audit trail)<br/>• LangGraph orchestration                                                                              | ⏳ TODO    |
 
 ### 3.3 Strategy Routing Matrix
 
-| **Document Profile** | **Routing Decision** | **Strategy** | **Fallback** |
-|---------------------|----------------------|--------------|--------------|
-| Native digital, simple layout | Character density > 0.01 | Fast Text (A) | Layout-Aware (B) |
-| Native digital, table-heavy | Table count > 10 | Layout-Aware (B) | Vision (C) |
-| Scanned image | Character density < 0.005 | Vision (C) | Manual Review |
-| Mixed content | Image ratio 0.3-0.7 | Layout-Aware (B) | Vision (C) |
+| **Document Profile**          | **Routing Decision**      | **Strategy**     | **Fallback**     |
+| ----------------------------- | ------------------------- | ---------------- | ---------------- |
+| Native digital, simple layout | Character density > 0.01  | Fast Text (A)    | Layout-Aware (B) |
+| Native digital, table-heavy   | Table count > 10          | Layout-Aware (B) | Vision (C)       |
+| Scanned image                 | Character density < 0.005 | Vision (C)       | Manual Review    |
+| Mixed content                 | Image ratio 0.3-0.7       | Layout-Aware (B) | Vision (C)       |
 
 ### 3.4 Error Handling & Recovery Paths
 
-| **Error Type** | **Detection** | **Recovery Action** | **Fallback** |
-|----------------|---------------|---------------------|---------------|
-| **Invalid PDF Format** | Stage 1: File validation fails | Log error, return 400 | Manual review queue |
-| **Confidence Too Low** | Stage 2: Score < 0.5 | Escalate to next strategy | Flag for review after 2 escalations |
-| **Budget Exceeded** | Stage 1: Estimated cost > $1 | Pause, request approval | Batch processing queue |
-| **Extraction Timeout** | Stage 2: Processing > 60s | Retry with timeout × 1.5 | Switch to faster strategy |
-| **Missing Content** | Stage 2: Empty extraction | Re-run with different strategy | Manual review |
-| **Corrupted Output** | Stage 2: Validation fails | Rollback, retry | Log and skip |
+| **Error Type**         | **Detection**                  | **Recovery Action**            | **Fallback**                        |
+| ---------------------- | ------------------------------ | ------------------------------ | ----------------------------------- |
+| **Invalid PDF Format** | Stage 1: File validation fails | Log error, return 400          | Manual review queue                 |
+| **Confidence Too Low** | Stage 2: Score < 0.5           | Escalate to next strategy      | Flag for review after 2 escalations |
+| **Budget Exceeded**    | Stage 1: Estimated cost > $1   | Pause, request approval        | Batch processing queue              |
+| **Extraction Timeout** | Stage 2: Processing > 60s      | Retry with timeout × 1.5       | Switch to faster strategy           |
+| **Missing Content**    | Stage 2: Empty extraction      | Re-run with different strategy | Manual review                       |
+| **Corrupted Output**   | Stage 2: Validation fails      | Rollback, retry                | Log and skip                        |
 
 **Recovery Flow:**
+
 ```
 Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
                                                     ↓ No
@@ -319,20 +245,20 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 
 ### 4.1 Strategy Cost Breakdown
 
-| **Strategy** | **Tool** | **Cost/Page** | **Latency** | **Use Case** |
-|--------------|----------|---------------|-------------|--------------|
-| **A: Fast Text** | pdfplumber | **$0.001** | 50ms | Native digital, simple layouts |
-| **B: Layout-Aware** | PyMuPDF | **$0.01** | 200ms | Multi-column, table-heavy docs |
-| **C: Vision** | Gemini Flash 1.5 | **$0.02** | 500ms | Scanned images, handwritten |
+| **Strategy**        | **Tool**         | **Cost/Page** | **Latency** | **Use Case**                   |
+| ------------------- | ---------------- | ------------- | ----------- | ------------------------------ |
+| **A: Fast Text**    | pdfplumber       | **$0.001**    | 50ms        | Native digital, simple layouts |
+| **B: Layout-Aware** | PyMuPDF          | **$0.01**     | 200ms       | Multi-column, table-heavy docs |
+| **C: Vision**       | Gemini Flash 1.5 | **$0.02**     | 500ms       | Scanned images, handwritten    |
 
 ### 4.2 Real-World Cost Examples
 
 | **Document Type** | **Pages** | **Strategy** | **Cost** | **Time** | **Confidence** |
-|-------------------|-----------|--------------|----------|----------|----------------|
-| Financial Report | 120 | B | $1.20 | 8.2s | 0.87 |
-| Scanned Legal Doc | 45 | C | $0.90 | 12.5s | 0.82 |
-| Technical Spec | 80 | A | $0.08 | 2.1s | 0.91 |
-| Mixed Content | 200 | B→C | $3.00 | 45s | 0.85 |
+| ----------------- | --------- | ------------ | -------- | -------- | -------------- |
+| Financial Report  | 120       | B            | $1.20    | 8.2s     | 0.87           |
+| Scanned Legal Doc | 45        | C            | $0.90    | 12.5s    | 0.82           |
+| Technical Spec    | 80        | A            | $0.08    | 2.1s     | 0.91           |
+| Mixed Content     | 200       | B→C          | $3.00    | 45s      | 0.85           |
 
 ### 4.3 Cost Optimization Analysis
 
@@ -341,9 +267,11 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 > **Scenario:** 10,000 documents (avg. 50 pages each) = 500,000 pages
 >
 > **Vision-Only Approach:**
+>
 > - 500,000 pages × $0.02 = **$10,000**
 >
 > **Smart Routing Approach:**
+>
 > - 60% Fast Text: 300,000 pages × $0.001 = $300
 > - 25% Layout-Aware: 125,000 pages × $0.01 = $1,250
 > - 15% Vision: 75,000 pages × $0.02 = $1,500
@@ -353,12 +281,12 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 
 ### 4.4 Budget Guard Mechanisms
 
-| **Guard Type** | **Threshold** | **Action** |
-|----------------|---------------|------------|
-| Per-document cap | $1.00 | Flag for batch processing |
-| Escalation limit | 2 escalations | Manual review |
-| Corpus budget | $5,000 | Pause processing |
-| Confidence floor | 0.5 | Reject extraction |
+| **Guard Type**   | **Threshold** | **Action**                |
+| ---------------- | ------------- | ------------------------- |
+| Per-document cap | $1.00         | Flag for batch processing |
+| Escalation limit | 2 escalations | Manual review             |
+| Corpus budget    | $5,000        | Pause processing          |
+| Confidence floor | 0.5           | Reject extraction         |
 
 ---
 
@@ -366,15 +294,15 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 
 ### 5.1 Completion Metrics
 
-| **Stage** | **Status** | **Tests** | **Coverage** | **Quality** |
-|-----------|------------|-----------|--------------|-------------|
-| Stage 1: Triage | ✅ 100% | 12/12 | 95% | Production |
-| Stage 2: Extraction | ✅ 100% | 59/59 | 92% | Production |
-| Infrastructure | ✅ 100% | 12/12 | 90% | Production |
-| Stage 3: Chunking | ⏳ 0% | 0/15 | - | Planned |
-| Stage 4: PageIndex | ⏳ 0% | 0/15 | - | Planned |
-| Stage 5: Query | ⏳ 0% | 0/20 | - | Planned |
-| **TOTAL** | **54%** | **71/133** | **91%** | **Prod-Ready** |
+| **Stage**           | **Status** | **Tests**  | **Coverage** | **Quality**    |
+| ------------------- | ---------- | ---------- | ------------ | -------------- |
+| Stage 1: Triage     | ✅ 100%    | 12/12      | 95%          | Production     |
+| Stage 2: Extraction | ✅ 100%    | 59/59      | 92%          | Production     |
+| Infrastructure      | ✅ 100%    | 12/12      | 90%          | Production     |
+| Stage 3: Chunking   | ⏳ 0%      | 0/15       | -            | Planned        |
+| Stage 4: PageIndex  | ⏳ 0%      | 0/15       | -            | Planned        |
+| Stage 5: Query      | ⏳ 0%      | 0/20       | -            | Planned        |
+| **TOTAL**           | **54%**    | **71/133** | **91%**      | **Prod-Ready** |
 
 ### 5.2 Key Achievements
 
@@ -385,20 +313,20 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 ✅ **Multi-Column Layout:** Reading order correction  
 ✅ **Handwriting OCR:** 4-engine fallback chain (Gemini, Azure, Google, Tesseract)  
 ✅ **Spatial Provenance:** Every fact has page + bounding box  
-✅ **Complete Audit Trail:** Extraction ledger with costs, confidence  
+✅ **Complete Audit Trail:** Extraction ledger with costs, confidence
 
 ### 5.3 Production Readiness Checklist
 
-| **Criterion** | **Status** |
-|---------------|------------|
-| Type Safety (Pydantic) | ✅ |
-| Test Coverage (> 90%) | ✅ |
-| CI/CD Pipeline | ✅ |
-| Pre-commit Hooks | ✅ |
-| Structured Logging | ✅ |
-| Error Handling | ✅ |
-| Documentation | ✅ |
-| Performance Optimization | ✅ |
+| **Criterion**            | **Status** |
+| ------------------------ | ---------- |
+| Type Safety (Pydantic)   | ✅         |
+| Test Coverage (> 90%)    | ✅         |
+| CI/CD Pipeline           | ✅         |
+| Pre-commit Hooks         | ✅         |
+| Structured Logging       | ✅         |
+| Error Handling           | ✅         |
+| Documentation            | ✅         |
+| Performance Optimization | ✅         |
 
 ---
 
@@ -406,17 +334,17 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 
 ### 6.1 Remaining Work (46%)
 
-| **Stage** | **Effort** | **Tests** | **Priority** |
-|-----------|------------|-----------|--------------|
-| Stage 3: Semantic Chunking | 8-10 hours | 15-20 | High |
-| Stage 4: PageIndex Builder | 10-12 hours | 15-20 | High |
-| Stage 5: Query Interface | 12-15 hours | 20-25 | High |
-| **TOTAL** | **30-37 hours** | **50-65** | |
+| **Stage**                  | **Effort**      | **Tests** | **Priority** |
+| -------------------------- | --------------- | --------- | ------------ |
+| Stage 3: Semantic Chunking | 8-10 hours      | 15-20     | High         |
+| Stage 4: PageIndex Builder | 10-12 hours     | 15-20     | High         |
+| Stage 5: Query Interface   | 12-15 hours     | 20-25     | High         |
+| **TOTAL**                  | **30-37 hours** | **50-65** |              |
 
 ### 6.2 Timeline
 
 - **Week 1:** Stage 3 - Semantic Chunking Engine
-- **Week 2:** Stage 4 - PageIndex Builder  
+- **Week 2:** Stage 4 - PageIndex Builder
 - **Week 3:** Stage 5 - Query Interface Agent
 - **Week 4:** Integration testing, documentation, deployment
 
@@ -424,7 +352,7 @@ Error Detected → Log to Ledger → Attempt Recovery → Success? → Continue
 
 ## 7. Conclusion
 
-The Document Intelligence Refinery represents a production-grade solution to enterprise document processing challenges. 
+The Document Intelligence Refinery represents a production-grade solution to enterprise document processing challenges.
 
 ### Key Differentiators
 
@@ -440,15 +368,10 @@ The Document Intelligence Refinery represents a production-grade solution to ent
 >
 > **54% Complete | 71/71 Tests Passing | Production-Ready Foundation**
 >
-> *Ready for Stages 3-5 implementation to achieve full query interface with provenance*
+> _Ready for Stages 3-5 implementation to achieve full query interface with provenance_
 
 ---
 
 **Repository:** https://github.com/your-org/document-intelligence-refinery  
 **Documentation:** See `COMPREHENSIVE_PROJECT_EXPLANATION.md`  
 **Contact:** Foundational Data Engineering Team
-
----
-
-*Report Generated: March 2024*  
-*Version: 1.0*
