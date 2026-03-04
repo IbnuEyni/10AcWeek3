@@ -48,6 +48,11 @@ htmlcov/
 data/
 *.pdf
 *.zip
+report/
+
+# helper
+check_ocr.py
+convert_to_pdf.py
 
 # OS
 .DS_Store
