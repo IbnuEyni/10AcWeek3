@@ -8,19 +8,15 @@ from .enhanced_table import EnhancedTableExtractor
 from .figure_extractor import FigureExtractor
 from .caption_binder import CaptionBinder
 from .column_detector import ColumnDetector
+from ..utils.docling_helper import DoclingHelper
 
 
 class LayoutExtractor(BaseExtractor):
     """Layout-aware extraction using Docling or MinerU"""
     
     def __init__(self):
-        self.use_docling = True
-        try:
-            from docling.document_converter import DocumentConverter
-            self.converter = DocumentConverter()
-        except ImportError:
-            self.use_docling = False
-            print("Warning: Docling not available, falling back to pdfplumber")
+        self.docling_helper = DoclingHelper()
+        self.use_docling = self.docling_helper.use_docling
         
         # Stage 2 enhancements
         self.table_extractor = EnhancedTableExtractor()
@@ -30,40 +26,50 @@ class LayoutExtractor(BaseExtractor):
     
     def extract(self, pdf_path: str, profile: DocumentProfile) -> Tuple[ExtractedDocument, float]:
         """Extract with layout awareness"""
-        if self.use_docling:
-            return self._extract_with_docling(pdf_path, profile)
-        else:
-            return self._extract_fallback(pdf_path, profile)
+        # Always use fallback for performance (Docling is too slow)
+        return self._extract_fallback(pdf_path, profile)
     
     def _extract_with_docling(self, pdf_path: str, profile: DocumentProfile) -> Tuple[ExtractedDocument, float]:
-        """Extract using Docling"""
-        result = self.converter.convert(pdf_path)
-        doc = result.document
+        """Extract using Docling with enhanced structure detection"""
+        # Convert once and cache
+        result = self.docling_helper.converter.convert(pdf_path)
         
         text_blocks = []
         tables = []
         figures = []
         
-        # Parse Docling output
-        for item in doc.iterate_items():
-            if item.type == "text":
-                bbox = BoundingBox(
-                    x0=item.bbox.x0 if hasattr(item, 'bbox') else 0,
-                    y0=item.bbox.y0 if hasattr(item, 'bbox') else 0,
-                    x1=item.bbox.x1 if hasattr(item, 'bbox') else 0,
-                    y1=item.bbox.y1 if hasattr(item, 'bbox') else 0,
-                    page=item.page if hasattr(item, 'page') else 0
-                )
-                text_blocks.append(TextBlock(
-                    content=item.text,
-                    bbox=bbox,
-                    reading_order=len(text_blocks)
-                ))
-            elif item.type == "table":
-                # Extract table structure
-                pass  # Implement table parsing
+        # Extract all items from Docling result
+        for item in result.document.iterate_items():
+            if hasattr(item, 'type'):
+                if item.type == 'text':
+                    bbox = BoundingBox(
+                        x0=getattr(item.bbox, 'x0', 0) if hasattr(item, 'bbox') else 0,
+                        y0=getattr(item.bbox, 'y0', 0) if hasattr(item, 'bbox') else 0,
+                        x1=getattr(item.bbox, 'x1', 0) if hasattr(item, 'bbox') else 0,
+                        y1=getattr(item.bbox, 'y1', 0) if hasattr(item, 'bbox') else 0,
+                        page=getattr(item, 'page', 0)
+                    )
+                    text_blocks.append(TextBlock(
+                        content=item.text if hasattr(item, 'text') else '',
+                        bbox=bbox,
+                        reading_order=len(text_blocks)
+                    ))
+                elif item.type == 'figure':
+                    bbox = BoundingBox(
+                        x0=getattr(item.bbox, 'x0', 0) if hasattr(item, 'bbox') else 0,
+                        y0=getattr(item.bbox, 'y0', 0) if hasattr(item, 'bbox') else 0,
+                        x1=getattr(item.bbox, 'x1', 0) if hasattr(item, 'bbox') else 0,
+                        y1=getattr(item.bbox, 'y1', 0) if hasattr(item, 'bbox') else 0,
+                        page=getattr(item, 'page', 0)
+                    )
+                    figures.append(Figure(
+                        figure_id=getattr(item, 'id', f"fig_{len(figures)}"),
+                        bbox=bbox,
+                        caption=getattr(item, 'caption', None),
+                        page=getattr(item, 'page', 0)
+                    ))
         
-        confidence = 0.85  # Higher confidence for layout-aware
+        confidence = 0.85
         
         extracted_doc = ExtractedDocument(
             doc_id=profile.doc_id,
@@ -122,8 +128,9 @@ class LayoutExtractor(BaseExtractor):
                                 table_id=enhanced_table.table_id
                             ))
         
-        # Extract figures
-        figures = self.figure_extractor.extract_figures(pdf_path, profile.doc_id)
+        # Skip figure extraction for performance (slow image processing)
+        # figures = self.figure_extractor.extract_figures(pdf_path, profile.doc_id, use_docling=False)
+        figures = []
         
         # Bind captions to figures
         if figures and text_blocks:

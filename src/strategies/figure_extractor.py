@@ -5,6 +5,7 @@ from typing import List, Dict, Optional, Any
 import hashlib
 from ..models.extracted_document import BoundingBox, Figure
 from ..logging_config import get_logger
+from ..utils.docling_helper import DoclingHelper
 
 logger = get_logger("figure_extractor")
 
@@ -15,18 +16,42 @@ class FigureExtractor:
     def __init__(self, output_dir: Path = None):
         self.output_dir = output_dir or Path(".refinery/figures")
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.docling_helper = DoclingHelper()
     
-    def extract_figures(self, pdf_path: str, doc_id: str) -> List[Figure]:
-        """
-        Extract all figures from PDF
+    def extract_figures(self, pdf_path: str, doc_id: str, use_docling: bool = True) -> List[Figure]:
+        """Extract all figures from PDF using Docling with pdfplumber fallback"""
+        # Skip Docling if explicitly disabled (already extracted in layout_aware)
+        if not use_docling or not self.docling_helper.use_docling:
+            return self._extract_with_pdfplumber(pdf_path, doc_id)
         
-        Args:
-            pdf_path: Path to PDF file
-            doc_id: Document identifier
-            
-        Returns:
-            List of extracted figures
-        """
+        # Try Docling for better caption detection
+        docling_figures = self.docling_helper.extract_figures_with_captions(pdf_path)
+        if docling_figures:
+            figures = []
+            for fig in docling_figures:
+                bbox_dict = fig.get('bbox', {})
+                bbox = BoundingBox(
+                    x0=bbox_dict.get('x0', 0),
+                    y0=bbox_dict.get('y0', 0),
+                    x1=bbox_dict.get('x1', 0),
+                    y1=bbox_dict.get('y1', 0),
+                    page=fig['page']
+                )
+                figures.append(Figure(
+                    figure_id=fig.get('figure_id', f"{doc_id}_fig_{fig['page']}"),
+                    bbox=bbox,
+                    caption=fig.get('caption'),
+                    page=fig['page'],
+                    metadata={'source': 'docling'}
+                ))
+            logger.info(f"Extracted {len(figures)} figures using Docling")
+            return figures
+        
+        # Fallback to pdfplumber
+        return self._extract_with_pdfplumber(pdf_path, doc_id)
+    
+    def _extract_with_pdfplumber(self, pdf_path: str, doc_id: str) -> List[Figure]:
+        """Fallback extraction using pdfplumber"""
         import pdfplumber
         
         figures = []

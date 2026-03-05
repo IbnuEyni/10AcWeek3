@@ -6,6 +6,7 @@ from pathlib import Path
 from ..logging_config import get_logger
 from ..exceptions import DocumentValidationError, TriageError
 from ..validators import validate_pdf_file
+from ..utils.docling_helper import DoclingHelper
 
 logger = get_logger("pdf_analyzer")
 
@@ -24,6 +25,8 @@ class PDFAnalyzer:
             'table_heavy_threshold': 10,
             'multi_column_threshold': 2
         }
+        # Don't initialize Docling in analyzer - too slow
+        # self.docling_helper = DoclingHelper()
     
     @staticmethod
     def analyze_document(pdf_path: str) -> Dict[str, any]:

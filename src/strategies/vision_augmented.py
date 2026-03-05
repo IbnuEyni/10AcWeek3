@@ -79,16 +79,26 @@ class VisionExtractor(BaseExtractor):
                     ))
                 
                 # OCR handwritten regions if detected
-                try:
-                    import io
-                    img_bytes = io.BytesIO()
-                    image.save(img_bytes, format='PNG')
-                    ocr_result = self.ocr.recognize(img_bytes.getvalue(), min_confidence=0.7)
-                    if ocr_result and ocr_result.confidence > 0.75:
-                        # Append OCR text if high confidence
-                        text_blocks[-1].content += f"\n[OCR: {ocr_result.text}]"
-                except Exception:
-                    pass  # OCR is optional enhancement
+                # Only run OCR if page likely has handwriting (low char density + high image ratio)
+                page_char_density = profile.character_density if page_num == 0 else 0.005
+                page_image_ratio = profile.image_ratio if page_num == 0 else 0.5
+                
+                # Heuristic: handwriting likely if very low text extraction but high image content
+                likely_handwriting = (page_char_density < 0.005 and page_image_ratio > 0.3) or \
+                                   ("[handwritten]" in extracted_content.lower() or \
+                                    "signature" in extracted_content.lower())
+                
+                if likely_handwriting:
+                    try:
+                        import io
+                        img_bytes = io.BytesIO()
+                        image.save(img_bytes, format='PNG')
+                        ocr_result = self.ocr.recognize(img_bytes.getvalue(), min_confidence=0.7)
+                        if ocr_result and ocr_result.confidence > 0.75:
+                            # Append OCR text if high confidence
+                            text_blocks[-1].content += f"\n[OCR: {ocr_result.text}]"
+                    except Exception:
+                        pass  # OCR is optional enhancement
         else:
             # Fallback: placeholder extraction
             print("Warning: Gemini API not configured, using placeholder")
