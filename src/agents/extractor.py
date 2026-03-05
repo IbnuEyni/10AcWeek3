@@ -1,4 +1,5 @@
 import json
+from rich.console import Console
 import yaml
 from pathlib import Path
 from typing import Tuple
@@ -9,12 +10,13 @@ from ..models.extracted_document import (
     RoutingSummary, ExtractionStrategy, EscalationReason, ProcessingStatus
 )
 from ..strategies import FastTextExtractor, LayoutExtractor, VisionExtractor
+from ..strategies.hybrid_pipeline import HybridExtractionPipeline
 from ..logging_config import get_logger
 from ..monitoring import metrics, PerformanceMonitor
 from ..config import config
 
 logger = get_logger("extractor")
-
+console = Console()
 
 class ExtractionRouter:
     """Routes documents to appropriate extraction strategy with escalation"""
@@ -37,6 +39,7 @@ class ExtractionRouter:
         self.fast_extractor = FastTextExtractor()
         self.layout_extractor = LayoutExtractor()
         self.vision_extractor = VisionExtractor()
+        self.hybrid_pipeline = HybridExtractionPipeline()  # New hybrid approach
         
         logger.info(f"ExtractionRouter initialized with threshold={self.CONFIDENCE_THRESHOLD}")
     
@@ -44,7 +47,7 @@ class ExtractionRouter:
         """Route to appropriate strategy with automatic escalation"""
         monitor = PerformanceMonitor()
         logger.info(f"Starting extraction for {profile.doc_id}")
-        
+        print(f"Starting extraction for {profile.doc_id}")  # Debug print
         # Initialize escalation tracking
         escalation_history = EscalationHistory(
             attempts=[],
@@ -56,13 +59,15 @@ class ExtractionRouter:
         # Select initial strategy
         strategy = self._select_strategy(profile)
         monitor.checkpoint("strategy_selected")
+        console.log(f"Selected strategy: {strategy.strategy_name}", style="bold cyan")
         logger.debug(f"Selected strategy: {strategy.strategy_name}")
         
         # Attempt extraction
         try:
+            print(f"Extracting using {strategy.strategy_name}...")  # Debug print
             extracted_doc, confidence = strategy.extract(pdf_path, profile)
             monitor.checkpoint("extraction_complete")
-            
+            console.log(f"Extraction confidence: {confidence:.2f}", style="bold yellow")
             # Record initial attempt
             escalation_history.attempts.append(EscalationAttempt(
                 strategy=ExtractionStrategy(strategy.strategy_name),
@@ -73,7 +78,7 @@ class ExtractionRouter:
                 status=ProcessingStatus.SUCCESS
             ))
             escalation_history.total_attempts = 1
-            
+            console.log(f"Initial extraction confidence: {confidence:.2f}", style="bold yellow")
             # Escalation guard
             if confidence < self.CONFIDENCE_THRESHOLD:
                 logger.warning(f"Low confidence ({confidence:.2f}), escalating...")
@@ -84,7 +89,7 @@ class ExtractionRouter:
             
             escalation_history.final_strategy = ExtractionStrategy(strategy.strategy_name)
             extracted_doc.escalation_history = escalation_history
-            
+            console.log(f"Final strategy: {strategy.strategy_name} | Confidence: {confidence:.2f}", style="bold green")
             # Create routing summary
             routing_summary = RoutingSummary(
                 selected_strategy=ExtractionStrategy(strategy.strategy_name),
@@ -134,6 +139,7 @@ class ExtractionRouter:
                 time_ms=processing_time,
                 success=False
             )
+            print(f"Extraction failed for {profile.doc_id}: {e}")  # Debug print
             logger.error(f"Extraction failed for {profile.doc_id}: {e}")
             raise
     
