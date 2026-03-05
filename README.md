@@ -28,29 +28,38 @@ Input Documents → Triage Agent → Extraction Router → Structured Output
 
 ## Installation
 
-### Prerequisites
-
-- Python 3.10+
-- Poetry (recommended) or pip
-
-### Setup
+### Quick Start (Recommended)
 
 ```bash
-# Clone repository
-git clone <repo-url>
-cd document-intelligence-refinery
+# Fast installation with uv (10-100× faster than pip)
+./install_uv.sh
 
-# Install dependencies
-poetry install
+# Choose your profile:
+# 1. Minimal  - Core only (pdfplumber, PyMuPDF)
+# 2. Tier 1   - + Native PDF tools (Camelot, Docling)
+# 3. Tier 2   - + Scanned PDF tools (Gemini API)
+# 4. Full     - All features (recommended)
+# 5. Dev      - Full + development tools
+```
 
-# For layout-aware extraction
-poetry install --extras layout
+### Manual Installation
 
-# For vision-augmented extraction
-poetry install --extras vision
+```bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install all features
-poetry install --extras all
+# Create environment and install
+uv venv .venv
+source .venv/bin/activate
+uv pip install -e ".[all]"  # Install all features
+```
+
+### Traditional pip
+
+```bash
+./install.sh  # Interactive bash script
+# or
+pip install -e ".[all]"
 ```
 
 ### Environment Variables
