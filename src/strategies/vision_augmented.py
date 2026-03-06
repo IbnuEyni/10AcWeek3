@@ -180,7 +180,7 @@ class VisionExtractor(BaseExtractor):
             return []
     
     def _call_gemini(self, image, page_num: int, profile: DocumentProfile) -> str:
-        """Call Gemini API with structured prompt"""
+        """Call Gemini API with fallback to GCP Vision on quota errors"""
         if not self.use_gemini:
             return ""
         
@@ -207,7 +207,38 @@ Return only the extracted text, no explanations."""
             response = self.client.generate_content([prompt, image])
             return response.text
         except Exception as e:
-            print(f"Gemini API error on page {page_num}: {str(e)}")
+            error_str = str(e)
+            # Check for quota error
+            if "429" in error_str or "quota" in error_str.lower():
+                print(f"Gemini quota exceeded on page {page_num}, falling back to GCP Vision OCR")
+                return self._call_gcp_vision(image, page_num)
+            else:
+                print(f"Gemini API error on page {page_num}: {error_str}")
+                return ""
+    
+    def _call_gcp_vision(self, image, page_num: int) -> str:
+        """Fallback to GCP Vision API for OCR"""
+        try:
+            from google.cloud import vision
+            import io
+            
+            client = vision.ImageAnnotatorClient()
+            
+            # Convert PIL image to bytes
+            img_byte_arr = io.BytesIO()
+            image.save(img_byte_arr, format='PNG')
+            img_byte_arr = img_byte_arr.getvalue()
+            
+            vision_image = vision.Image(content=img_byte_arr)
+            response = client.text_detection(image=vision_image)
+            texts = response.text_annotations
+            
+            if texts:
+                return texts[0].description
+            return ""
+            
+        except Exception as e:
+            print(f"GCP Vision fallback failed on page {page_num}: {e}")
             return ""
     
     def estimate_cost(self, profile: DocumentProfile) -> float:
