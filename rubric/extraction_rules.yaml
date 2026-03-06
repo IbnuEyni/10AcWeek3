@@ -229,5 +229,6 @@ extraction_strategies:
   fast_text:
     use_layout_mode: false          # Use pdfplumber's layout=True for better structure
   vision:
+    use_docling_preprocessing: true # Use Docling FAST to extract layout before Gemini OCR
     max_retries: 3                  # Retry failed API calls
     timeout_seconds: 30             # API timeout

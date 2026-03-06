@@ -11,6 +11,7 @@ from ..models.document_profile import DocumentProfile
 from .figure_extractor import FigureExtractor
 from .caption_binder import CaptionBinder
 from .handwriting_ocr import HandwritingOCR
+from ..utils.docling_helper import DoclingHelper
 
 
 class VisionExtractor(BaseExtractor):
@@ -48,9 +49,16 @@ class VisionExtractor(BaseExtractor):
         self.figure_extractor = FigureExtractor()
         self.caption_binder = CaptionBinder()
         self.ocr = HandwritingOCR()
+        self.docling_helper = DoclingHelper()  # Use Docling for layout pre-processing
     
     def extract(self, pdf_path: str, profile: DocumentProfile) -> Tuple[ExtractedDocument, float]:
-        """Extract using Gemini vision model"""
+        """Extract using hybrid approach: Docling layout + Gemini vision
+        
+        Strategy:
+        1. Use Docling FAST mode to extract layout structure (reading order, tables, figures)
+        2. Use Gemini vision for OCR on scanned/low-quality regions
+        3. Merge results for best of both worlds
+        """
         from ..exceptions import BudgetExceededError
         
         # Budget guard
@@ -62,12 +70,43 @@ class VisionExtractor(BaseExtractor):
         tables = []
         figures = []
         
-        if self.use_gemini:
-            # Convert PDF pages to images and process with Gemini
+        # Step 1: Try Docling FAST mode for layout structure (even on scanned docs)
+        if self.docling_helper.use_docling:
+            try:
+                result = self.docling_helper.converter.convert(pdf_path)
+                markdown_content = result.document.export_to_markdown()
+                
+                # Extract structured content from Docling
+                for page_num, item in enumerate(result.document.iterate_items()):
+                    if hasattr(item, 'type'):
+                        if item.type in ['text', 'paragraph']:
+                            bbox = BoundingBox(
+                                x0=getattr(item.bbox, 'x0', 0) if hasattr(item, 'bbox') else 0,
+                                y0=getattr(item.bbox, 'y0', 0) if hasattr(item, 'bbox') else 0,
+                                x1=getattr(item.bbox, 'x1', 0) if hasattr(item, 'bbox') else 0,
+                                y1=getattr(item.bbox, 'y1', 0) if hasattr(item, 'bbox') else 0,
+                                page=getattr(item, 'page', 0)
+                            )
+                            text_blocks.append(TextBlock(
+                                content=item.text if hasattr(item, 'text') else '',
+                                bbox=bbox,
+                                reading_order=len(text_blocks)
+                            ))
+            except Exception as e:
+                print(f"Docling pre-processing failed: {e}, falling back to pure vision")
+        
+        # Step 2: Use Gemini for OCR on low-quality/scanned regions
+        if self.use_gemini and len(text_blocks) < profile.total_pages:
+            # Only process pages that Docling couldn't extract well
             images = self._pdf_to_images(pdf_path)
             
             for page_num, image in enumerate(images):
-                # Call Gemini with structured extraction prompt
+                # Skip if Docling already extracted this page well
+                existing_content = [b for b in text_blocks if b.bbox.page == page_num]
+                if existing_content and len(existing_content[0].content) > 100:
+                    continue  # Docling got good content, skip Gemini
+                
+                # Call Gemini for OCR on this page
                 extracted_content = self._call_gemini(image, page_num, profile)
                 
                 if extracted_content:
