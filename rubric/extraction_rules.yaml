@@ -213,3 +213,21 @@ escalation:
     table_count_exceeds: 10       # Escalate if >10 tables detected
     multi_column: true            # Escalate multi-column layouts
     handwriting_detected: true    # Escalate if handwriting present
+
+
+# ============================================================================
+# 9. EXTRACTION STRATEGY CONFIGURATION
+# ============================================================================
+# Configuration for extraction strategies behavior
+# - use_docling_fast_mode: Enable Docling in FAST mode (no OCR/AI) for layout extraction
+# - docling_fallback_to_pdfplumber: Fallback to pdfplumber if Docling fails
+#
+extraction_strategies:
+  layout_aware:
+    use_docling_fast_mode: true    # Use Docling FAST mode (no OCR, optimized for native PDFs)
+    docling_fallback: true          # Fallback to pdfplumber if Docling unavailable
+  fast_text:
+    use_layout_mode: false          # Use pdfplumber's layout=True for better structure
+  vision:
+    max_retries: 3                  # Retry failed API calls
+    timeout_seconds: 30             # API timeout

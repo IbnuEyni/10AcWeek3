@@ -8,12 +8,34 @@ logger = get_logger("docling_helper")
 
 
 class DoclingHelper:
-    """Helper class for Docling document processing"""
+    """Helper class for Docling document processing with FAST mode (no OCR/AI)"""
     
-    def __init__(self):
-        self.use_docling = False  # Disabled for performance
+    def __init__(self, use_fast_mode: bool = True):
+        self.use_docling = False
         self.converter = None
-        logger.info("Docling disabled for performance (10-30s initialization overhead)")
+        self.use_fast_mode = use_fast_mode
+        
+        try:
+            from docling.document_converter import DocumentConverter, PdfFormatOption
+            from docling.datamodel.base_models import InputFormat
+            from docling.datamodel.pipeline_options import PdfPipelineOptions
+            
+            # Configure FAST mode (no OCR, no AI table structure)
+            pipeline_options = PdfPipelineOptions()
+            pipeline_options.do_ocr = False
+            pipeline_options.do_table_structure = False
+            
+            self.converter = DocumentConverter(
+                format_options={
+                    InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+                }
+            )
+            self.use_docling = True
+            logger.info("Docling initialized in FAST mode (no OCR/AI)")
+        except ImportError:
+            logger.warning("Docling not available, falling back to pdfplumber")
+        except Exception as e:
+            logger.error(f"Failed to initialize Docling: {e}")
     
     def extract_document_structure(self, pdf_path: str) -> List[Dict[str, Any]]:
         """Extract document hierarchy (sections, headings)"""
