@@ -17,13 +17,13 @@ The Document Intelligence Refinery is a production-ready system that transforms 
 ## Architecture
 
 ```
-Input Documents → Triage Agent → Extraction Router → Structured Output
-                      ↓              ↓                      ↓
-                 DocumentProfile  Strategy Selection   ExtractedDocument
-                                     ↓
-                              [Fast Text]
-                              [Layout Aware]
-                              [Vision Augmented]
+Input Documents → Triage → Extraction → Chunking → PageIndex → Query Interface
+                    ↓          ↓           ↓           ↓            ↓
+              DocumentProfile  ExtractedDoc  LDUs    PageIndex  ProvenanceChain
+                    ↓
+            [Fast Text]
+            [Layout Aware]
+            [Vision Augmented]
 ```
 
 ## Installation
@@ -73,21 +73,53 @@ GEMINI_API_KEY=your_key_here  # For vision extraction
 
 ## Quick Start
 
+### Basic Pipeline (Stages 1-3)
+
 ```python
 from src.agents.triage import TriageAgent
 from src.agents.extractor import ExtractionRouter
+from src.agents.chunking import ChunkingAgent
 
 # Initialize agents
 triage = TriageAgent()
 router = ExtractionRouter()
+chunker = ChunkingAgent()
 
 # Process document
 profile = triage.profile_document("path/to/document.pdf")
 extracted_doc = router.extract("path/to/document.pdf", profile)
+ldus = chunker.process_document(extracted_doc, "path/to/document.pdf")
 
 print(f"Extracted {len(extracted_doc.text_blocks)} text blocks")
-print(f"Extracted {len(extracted_doc.tables)} tables")
-print(f"Confidence: {extracted_doc.confidence_score:.2f}")
+print(f"Created {len(ldus)} LDUs")
+```
+
+### Full Pipeline with Query Interface (Stages 1-5)
+
+```python
+from src.agents import (
+    TriageAgent, ExtractionRouter, ChunkingAgent,
+    PageIndexBuilder, QueryAgent
+)
+
+# Run full pipeline
+triage = TriageAgent()
+router = ExtractionRouter()
+chunker = ChunkingAgent()
+indexer = PageIndexBuilder()
+query_agent = QueryAgent()
+
+# Process
+profile = triage.profile_document("document.pdf")
+extracted_doc = router.extract("document.pdf", profile)
+ldus = chunker.process_document(extracted_doc, "document.pdf")
+page_index = indexer.build_index(extracted_doc, ldus)
+
+# Query with provenance
+result = query_agent.query("What is the total revenue?", doc_id=profile.doc_id)
+print(result.answer)
+for citation in result.citations:
+    print(f"Source: {citation.document_name}, Page {citation.page_number}")
 ```
 
 ## Project Structure
@@ -103,19 +135,26 @@ document-intelligence-refinery/
 │   │   └── provenance.py
 │   ├── agents/              # Core agents
 │   │   ├── triage.py        # Document classifier
-│   │   └── extractor.py     # Extraction router
+│   │   ├── extractor.py     # Extraction router
+│   │   ├── chunking.py      # Semantic chunking
+│   │   ├── pageindex_builder.py  # PageIndex builder
+│   │   └── query_agent.py   # Query interface
 │   ├── strategies/          # Extraction strategies
 │   │   ├── base.py
 │   │   ├── fast_text.py
 │   │   ├── layout_aware.py
 │   │   └── vision_augmented.py
 │   └── utils/
-│       └── pdf_analyzer.py
+│       ├── pdf_analyzer.py
+│       ├── docling_helper.py
+│       └── fact_extractor.py
 ├── rubric/
 │   └── extraction_rules.yaml
 ├── .refinery/
 │   ├── profiles/            # Document profiles (JSON)
+│   ├── ldus/                # Logical Document Units
 │   ├── pageindex/           # Page indices
+│   ├── facts.db             # Fact database (SQLite)
 │   └── extraction_ledger.jsonl
 ├── tests/
 │   ├── unit/
@@ -124,6 +163,39 @@ document-intelligence-refinery/
 │   └── DOMAIN_NOTES.md
 └── data/                    # Corpus documents
 ```
+
+## Pipeline Stages
+
+### Stage 1: Triage Agent
+Classifies documents by origin type, layout complexity, and domain to select optimal extraction strategy.
+
+### Stage 2: Extraction Router
+Multi-strategy extraction with confidence-gated escalation:
+- **Fast Text**: pdfplumber for native digital PDFs
+- **Layout-Aware**: Docling for complex layouts
+- **Vision-Augmented**: Gemini for scanned documents
+
+### Stage 3: Semantic Chunking
+Creates Logical Document Units (LDUs) that preserve:
+- Table integrity (headers + rows)
+- Figure-caption binding
+- List coherence
+- Section context
+
+### Stage 4: PageIndex Builder
+Builds hierarchical navigation structure:
+- Section detection and hierarchy
+- LDU-to-section mapping
+- Section summaries
+- Data type tracking
+
+### Stage 5: Query Interface Agent
+Natural language query interface with three tools:
+- **PageIndex Navigate**: Section-based navigation
+- **Semantic Search**: Vector/keyword search over LDUs
+- **Structured Query**: SQL over extracted facts
+
+Every answer includes full provenance: document name, page number, bounding box, and content hash.
 
 ## Extraction Strategies
 
@@ -162,6 +234,19 @@ chunking:
     - table_integrity
     - figure_caption_binding
     - list_coherence
+```
+
+## Demo Scripts
+
+```bash
+# Run complete 5-stage pipeline
+python demo_full_pipeline.py data/sample.pdf
+
+# Query processed document
+python demo_query_interface.py sample
+
+# Run stages 1-3 only
+python demo_complete_pipeline.py data/sample.pdf
 ```
 
 ## Testing
@@ -216,11 +301,15 @@ Located at `.refinery/extraction_ledger.jsonl`:
 
 ## Roadmap
 
-- [ ] Phase 3: Semantic Chunking Engine
-- [ ] Phase 4: PageIndex Builder
-- [ ] Phase 5: Query Interface Agent
+- [x] Phase 1: Triage Agent
+- [x] Phase 2: Multi-Strategy Extraction
+- [x] Phase 3: Semantic Chunking Engine
+- [x] Phase 4: PageIndex Builder
+- [x] Phase 5: Query Interface Agent
 - [ ] Multi-document reasoning
 - [ ] Incremental processing & caching
+- [ ] Vector store optimization (FAISS/Qdrant)
+- [ ] LLM-powered answer generation
 
 ## License
 

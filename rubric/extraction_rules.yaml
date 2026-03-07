@@ -30,16 +30,21 @@ confidence:
   escalation_threshold: 0.7   # Escalate if below 70%
 
 # ============================================================================
-# 2. ORIGIN TYPE DETECTION
+# 2. ORIGIN TYPE DETECTION (Short-Circuit Waterfall)
 # ============================================================================
 # Parameters for classifying whether document is native digital or scanned.
+# Uses a 3-pass waterfall algorithm that short-circuits for efficiency:
+#   Pass 1 (Microsecond): PyMuPDF font check - no fonts = scanned
+#   Pass 2 (Millisecond): pdfplumber image ratio - >80% image = hybrid
+#   Pass 3 (Second): Docling layout detection - only for native digital
+#
 # - min_char_density: Minimum characters per point² for native digital
-# - max_image_ratio: Maximum image-to-page ratio for native digital
+# - max_image_ratio: Maximum image-to-page ratio (80% threshold for short-circuit)
 # - font_metadata_weight: Weight of font metadata presence in classification
 #
 origin_detection:
   min_char_density: 0.01   # chars per point²
-  max_image_ratio: 0.5     # 50% max for native digital
+  max_image_ratio: 0.8     # 80% threshold - triggers Pass 2 short-circuit
   font_metadata_weight: 0.3  # 30% weight in decision
 
 # ============================================================================

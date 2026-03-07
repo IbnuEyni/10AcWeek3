@@ -8,6 +8,7 @@ from rich.console import Console
 from ..models.extracted_document import ExtractedDocument
 from ..models.ldu import LDU
 from ..chunking import SemanticChunker
+from ..validators.structure_validator import StructureValidator
 from ..logging_config import get_logger
 
 logger = get_logger("chunking_agent")
@@ -20,6 +21,7 @@ class ChunkingAgent:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.chunker = SemanticChunker(config_path=config_path)
+        self.validator = StructureValidator()
         logger.info(f"ChunkingAgent initialized with output_dir={output_dir}")
     
     def process_document(self, extracted_doc: ExtractedDocument, pdf_path: str) -> List[LDU]:
@@ -38,6 +40,15 @@ class ChunkingAgent:
         try:
             # Chunk document
             ldus = self.chunker.chunk_document(extracted_doc, pdf_path)
+            
+            # Validate structure preservation
+            validation = self.validator.validate_chunking(ldus, extracted_doc)
+            score = self.validator.get_validation_score(validation)
+            
+            if score < 1.0:
+                logger.warning(f"Structure validation score: {score:.2%}. Issues: {[k for k, v in validation.items() if not v]}")
+            else:
+                logger.info(f"Structure validation: 100% PASS")
             
             # Save LDUs
             self._save_ldus(ldus, extracted_doc.doc_id)

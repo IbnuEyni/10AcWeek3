@@ -15,7 +15,7 @@ from ..utils.docling_helper import DoclingHelper
 
 
 class VisionExtractor(BaseExtractor):
-    """Vision-augmented extraction using Gemini Flash 2.5 for scanned documents"""
+    """Vision-augmented extraction with Bounding-Box Micro-Cropping for cost optimization"""
     
     def __init__(self, api_key: str = None, config_path: str = None):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
@@ -30,6 +30,7 @@ class VisionExtractor(BaseExtractor):
         
         # Extract config values
         self.cost_per_image = self.config['cost']['vision_per_page']
+        self.cost_per_crop = self.cost_per_image / 10  # Micro-crop is 10x cheaper
         self.MAX_COST_PER_DOC = self.config['cost']['vlm_budget_cap']
         self.domain_prompts = self.config['domain_prompts']
         
@@ -248,3 +249,102 @@ Return only the extracted text, no explanations."""
     @property
     def strategy_name(self) -> str:
         return "vision_augmented"
+
+    
+    def extract_with_micro_crop(
+        self, 
+        pdf_path: str, 
+        failed_elements: List[Dict],
+        profile: DocumentProfile
+    ) -> List[Dict]:
+        """
+        Extract failed elements using bounding-box micro-cropping
+        
+        Args:
+            pdf_path: Path to PDF
+            failed_elements: List of {bbox, type, page} for low-confidence elements
+            profile: Document profile
+            
+        Returns:
+            List of extracted content for each element
+        """
+        if not self.use_gemini:
+            return []
+        
+        results = []
+        
+        for element in failed_elements:
+            bbox = element['bbox']
+            page_num = bbox.get('page', 0)
+            element_type = element.get('type', 'unknown')
+            
+            # Render page and crop to bbox
+            cropped_image = self._crop_bbox_from_page(pdf_path, bbox, page_num)
+            
+            if cropped_image:
+                # Extract from cropped snippet
+                content = self._extract_from_crop(cropped_image, element_type, profile)
+                
+                results.append({
+                    'bbox': bbox,
+                    'content': content,
+                    'type': element_type,
+                    'page': page_num
+                })
+        
+        return results
+    
+    def _crop_bbox_from_page(self, pdf_path: str, bbox: Dict, page_num: int):
+        """Crop specific bounding box from PDF page"""
+        try:
+            import fitz  # PyMuPDF
+            from PIL import Image
+            
+            # Open PDF
+            doc = fitz.open(pdf_path)
+            page = doc[page_num]
+            
+            # Render page to image
+            pix = page.get_pixmap(dpi=150)
+            img_data = pix.tobytes("png")
+            
+            # Convert to PIL Image
+            import io
+            page_image = Image.open(io.BytesIO(img_data))
+            
+            # Crop to bbox
+            cropped = page_image.crop((
+                bbox['x0'], 
+                bbox['y0'], 
+                bbox['x1'], 
+                bbox['y1']
+            ))
+            
+            doc.close()
+            return cropped
+            
+        except Exception as e:
+            print(f"Micro-crop failed: {e}")
+            return None
+    
+    def _extract_from_crop(self, cropped_image, element_type: str, profile: DocumentProfile) -> str:
+        """Extract content from cropped image snippet"""
+        if element_type == 'table':
+            prompt = """Extract this table as structured JSON.
+            
+Return format:
+{
+  "headers": ["col1", "col2", ...],
+  "rows": [["val1", "val2", ...], ...]
+}"""
+        elif element_type == 'chart':
+            prompt = "Extract all text, numbers, and labels from this chart/figure."
+        else:
+            prompt = "Extract all visible text from this image snippet."
+        
+        try:
+            response = self.client.generate_content([prompt, cropped_image])
+            return response.text
+        except Exception as e:
+            print(f"Gemini extraction from crop failed: {e}")
+            return ""

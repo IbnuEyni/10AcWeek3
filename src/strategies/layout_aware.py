@@ -9,6 +9,7 @@ from .figure_extractor import FigureExtractor
 from .caption_binder import CaptionBinder
 from .column_detector import ColumnDetector
 from ..utils.docling_helper import DoclingHelper
+from ..validators.structure_validator import StructureValidator
 
 
 class LayoutExtractor(BaseExtractor):
@@ -23,12 +24,24 @@ class LayoutExtractor(BaseExtractor):
         self.figure_extractor = FigureExtractor()
         self.caption_binder = CaptionBinder()
         self.column_detector = ColumnDetector()
+        self.validator = StructureValidator()
     
     def extract(self, pdf_path: str, profile: DocumentProfile) -> Tuple[ExtractedDocument, float]:
         """Extract with layout awareness using Docling FAST mode or pdfplumber fallback"""
         if self.use_docling:
-            return self._extract_with_docling(pdf_path, profile)
-        return self._extract_fallback(pdf_path, profile)
+            extracted_doc, confidence = self._extract_with_docling(pdf_path, profile)
+        else:
+            extracted_doc, confidence = self._extract_fallback(pdf_path, profile)
+        
+        # Validate structure
+        validation = self.validator.validate_extraction(extracted_doc)
+        validation_score = self.validator.get_validation_score(validation)
+        
+        # Adjust confidence based on validation
+        final_confidence = confidence * validation_score
+        extracted_doc.confidence_score = final_confidence
+        
+        return extracted_doc, final_confidence
     
     def _extract_with_docling(self, pdf_path: str, profile: DocumentProfile) -> Tuple[ExtractedDocument, float]:
         """Extract using Docling FAST mode (no OCR, optimized for native PDFs)

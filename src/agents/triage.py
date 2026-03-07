@@ -74,7 +74,7 @@ class TriageAgent:
             logger.debug(f"Origin type: {origin_type} (confidence: {origin_confidence:.2f})")
             
             # Classify layout complexity
-            layout_complexity, layout_confidence = self.analyzer.detect_layout_complexity(metrics)
+            layout_complexity, layout_confidence = self.analyzer.detect_layout_complexity(metrics, str(path))
             logger.debug(f"Layout complexity: {layout_complexity} (confidence: {layout_confidence:.2f})")
             
             # Detect domain

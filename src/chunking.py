@@ -6,6 +6,7 @@ from pathlib import Path
 from .models.extracted_document import ExtractedDocument, TextBlock, Table, Figure, BoundingBox
 from .models.ldu import LDU, ChunkType
 from .logging_config import get_logger
+from .strategies.list_detector import ListDetector
 
 logger = get_logger("chunking")
 
@@ -24,6 +25,7 @@ class SemanticChunker:
         self.max_tokens = self.chunking_config['max_tokens']
         self.overlap_tokens = self.chunking_config['overlap_tokens']
         self.rules = {rule['name']: rule for rule in self.chunking_config['rules']}
+        self.list_detector = ListDetector()
         
         logger.info(f"SemanticChunker initialized: max_tokens={self.max_tokens}")
     
@@ -95,18 +97,45 @@ class SemanticChunker:
     
 
     def _chunk_text_blocks(self, blocks: List[TextBlock], doc_id: str) -> List[LDU]:
-        """Rule 3, 4 & 5: Smart text chunking with overlap"""
+        """Rule 3, 4 & 5: Smart text chunking with list detection and overlap"""
         ldus = []
         sorted_blocks = sorted(blocks, key=lambda b: b.reading_order)
+        
+        # Rule 3: Detect lists and keep them together
+        list_ranges = self.list_detector.detect_list(sorted_blocks)
+        list_blocks_set = set()
+        for start, end in list_ranges:
+            list_blocks_set.update(range(start, end + 1))
         
         current_chunk = []
         current_tokens = 0
         chunk_id = 0
+        in_list = False
         
-        for block in sorted_blocks:
+        for idx, block in enumerate(sorted_blocks):
             block_tokens = self._estimate_tokens(block.content)
+            is_list_block = idx in list_blocks_set
             
-            if current_tokens + block_tokens > self.max_tokens and current_chunk:
+            # If entering a list, flush current chunk
+            if is_list_block and not in_list and current_chunk:
+                ldu = self._create_text_ldu(current_chunk, doc_id, chunk_id)
+                ldus.append(ldu)
+                chunk_id += 1
+                current_chunk = []
+                current_tokens = 0
+                in_list = True
+            
+            # If exiting a list, flush list chunk
+            if not is_list_block and in_list and current_chunk:
+                ldu = self._create_text_ldu(current_chunk, doc_id, chunk_id, chunk_type=ChunkType.LIST)
+                ldus.append(ldu)
+                chunk_id += 1
+                current_chunk = []
+                current_tokens = 0
+                in_list = False
+            
+            # Normal chunking logic
+            if current_tokens + block_tokens > self.max_tokens and current_chunk and not in_list:
                 ldu = self._create_text_ldu(current_chunk, doc_id, chunk_id)
                 ldus.append(ldu)
                 chunk_id += 1
@@ -123,22 +152,24 @@ class SemanticChunker:
             current_chunk.append(block)
             current_tokens += block_tokens
         
+        # Flush remaining
         if current_chunk:
-            ldu = self._create_text_ldu(current_chunk, doc_id, chunk_id)
+            chunk_type = ChunkType.LIST if in_list else ChunkType.TEXT
+            ldu = self._create_text_ldu(current_chunk, doc_id, chunk_id, chunk_type=chunk_type)
             ldus.append(ldu)
         
         return ldus
     
-    def _create_text_ldu(self, blocks: List[TextBlock], doc_id: str, chunk_id: int) -> LDU:
+    def _create_text_ldu(self, blocks: List[TextBlock], doc_id: str, chunk_id: int, chunk_type: ChunkType = ChunkType.TEXT) -> LDU:
         """Create text LDU"""
         content = "\n\n".join(b.content for b in blocks)
         pages = sorted(set(b.bbox.page for b in blocks))
         bboxes = [b.bbox for b in blocks]
         
         return LDU(
-            ldu_id=f"{doc_id}_text_{chunk_id}",
+            ldu_id=f"{doc_id}_{chunk_type}_{chunk_id}",
             content=content,
-            chunk_type=ChunkType.TEXT,
+            chunk_type=chunk_type,
             page_refs=pages,
             bounding_boxes=bboxes,
             parent_section=None,
