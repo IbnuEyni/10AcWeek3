@@ -71,7 +71,7 @@ def show_stage1_triage(pdf_path: str):
             "layout_complexity": profile.layout_complexity.value if hasattr(profile.layout_complexity, 'value') else profile.layout_complexity,
             "character_density": round(profile.character_density, 4),
             "image_ratio": round(profile.image_ratio, 4),
-            "table_count": profile.table_count,
+            "table_count_estimate": profile.table_count_estimate,
         })
     
     with col2:
@@ -86,8 +86,8 @@ def show_stage1_triage(pdf_path: str):
             st.write("✓ Scanned document detected (low character density)")
             st.write("✓ Using **Vision-Augmented** extraction (Gemini + OCR)")
         
-        if profile.table_count > 0:
-            st.write(f"✓ {profile.table_count} tables detected - preserving structure")
+        if profile.table_count_estimate > 0:
+            st.write(f"✓ {profile.table_count_estimate} tables detected - preserving structure")
 
 
 def show_stage2_extraction(pdf_path: str, profile):
