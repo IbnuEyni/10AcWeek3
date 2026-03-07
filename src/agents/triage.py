@@ -11,7 +11,7 @@ from ..models.document_profile import (
 from ..utils.pdf_analyzer import PDFAnalyzer
 from ..logging_config import get_logger
 from ..exceptions import TriageError, DocumentValidationError
-from ..validators import validate_pdf_file
+from ..validation_utils import validate_pdf_file
 
 logger = get_logger("triage")
 

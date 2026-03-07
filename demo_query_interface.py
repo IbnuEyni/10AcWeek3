@@ -54,7 +54,8 @@ def run_pipeline(pdf_path: str):
     # Stage 4: PageIndex
     console.print("[cyan]Stage 4:[/cyan] PageIndex Builder")
     indexer = PageIndexBuilderAI()
-    page_index = indexer.build_index(extracted_doc, ldus, pdf_path=pdf_path)
+    pageindex_path = f".refinery/pageindex/{profile.doc_id}_pageindex.json"
+    page_index = indexer.build_index(extracted_doc, ldus, pdf_path=pdf_path, output_path=pageindex_path)
     console.print(f"[green]✓[/green] Built index with {len(page_index.root_sections)} sections")
     
     # Stage 4.5: Fact Extraction
@@ -90,17 +91,17 @@ def demo_query_interface(doc_id: str):
     # Example queries
     queries = [
         {
-            "query": "What are the main sections in this document?",
+            "query": "What were the total import tax expenditures in FY 2020/21, and what percentage of GDP did this represent?",
             "method": "pageindex",
             "description": "PageIndex Navigation"
         },
         {
-            "query": "What is the total revenue?",
+            "query": "According to Table 4.1, what was the exact total tax expenditure for 'Second schedule' imports in FY 2019/20?",
             "method": "structured",
             "description": "Structured Query (SQL)"
         },
         {
-            "query": "Explain the financial performance",
+            "query": "How does the report define the benchmark tax system for VAT on imports? Please list the key components of the tax base.",
             "method": "semantic",
             "description": "Semantic Search"
         }

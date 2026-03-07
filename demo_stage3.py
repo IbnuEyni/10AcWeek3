@@ -18,7 +18,7 @@ def demo_stage3_chunking():
     console.print("\n[bold cyan]Stage 3: Semantic Chunking Engine Demo[/bold cyan]\n")
     
     # Select a document from corpus
-    pdf_path = "data/2013-E.C-Assigned-regular-budget-and-expense.pdf"
+    pdf_path = "data/Consumer Price Index July 2025.pdf"
     
     if not Path(pdf_path).exists():
         console.print(f"[red]Document not found: {pdf_path}[/red]")

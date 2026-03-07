@@ -117,10 +117,13 @@ def demo_full_pipeline(pdf_path: str):
     console.print(f"[cyan]Total Pages:[/cyan] {page_index.total_pages}")
     console.print(f"[green]✓ Stage 4 complete in {stage_times['pageindex']:.2f}s[/green]")
     
-    # Extract facts for structured queries
-    console.print("[dim]Extracting facts for SQL queries...[/dim]")
-    fact_count = fact_extractor.extract_facts(extracted_doc, ldus)
-    console.print(f"[cyan]Facts Extracted:[/cyan] {fact_count}")
+    # Extract facts for structured queries (optional - skip if API unavailable)
+    try:
+        console.print("[dim]Extracting facts for SQL queries...[/dim]")
+        fact_count = fact_extractor.extract_facts(extracted_doc, ldus)
+        console.print(f"[cyan]Facts Extracted:[/cyan] {fact_count}")
+    except Exception:
+        console.print("[dim]Fact extraction skipped (API unavailable)[/dim]")
     
     # ========================================================================
     # STAGE 5: QUERY INTERFACE

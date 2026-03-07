@@ -5,7 +5,7 @@ from typing import Dict, Tuple, List
 from pathlib import Path
 from ..logging_config import get_logger
 from ..exceptions import DocumentValidationError, TriageError
-from ..validators import validate_pdf_file
+from ..validation_utils import validate_pdf_file
 from ..utils.docling_helper import DoclingHelper
 
 logger = get_logger("pdf_analyzer")
@@ -57,6 +57,7 @@ class PDFAnalyzer:
             # PASS 1: Microsecond Check (PyMuPDF) - Font metadata
             import fitz
             doc = fitz.open(path)
+            total_pages = doc.page_count
             first_page = doc[0]
             fonts = first_page.get_fonts()
             doc.close()
@@ -68,7 +69,7 @@ class PDFAnalyzer:
             if not has_fonts:
                 logger.info("SHORT-CIRCUIT: No fonts detected → scanned_image")
                 return {
-                    "total_pages": len(doc),
+                    "total_pages": total_pages,
                     "character_density": 0.0,
                     "image_ratio": 1.0,
                     "has_font_metadata": False,
@@ -89,7 +90,7 @@ class PDFAnalyzer:
                 image_ratios: List[float] = []
                 table_count = 0
                 
-                for page_num, page in enumerate(pdf.pages):
+                for page_num, page in enumerate(pdf.pages[:5]):  # Sample first 5 pages only
                     try:
                         # Character density
                         text = page.extract_text() or ""

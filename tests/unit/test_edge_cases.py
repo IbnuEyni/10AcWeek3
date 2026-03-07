@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 from src.utils.pdf_analyzer import PDFAnalyzer
 from src.agents.triage import TriageAgent
 from src.exceptions import DocumentValidationError, TriageError
-from src.validators import validate_pdf_file, validate_confidence_score, validate_cost
+from src.validation_utils import validate_pdf_file, validate_confidence_score, validate_cost
 
 
 class TestEdgeCases:

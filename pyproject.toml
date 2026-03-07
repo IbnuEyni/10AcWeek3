@@ -63,6 +63,12 @@ dev = [
     "pre-commit>=3.0.0",  # Git hooks
 ]
 
+# Demo app
+demo = [
+    "streamlit>=1.28.0",  # Interactive web app
+    "pillow>=10.0.0",     # Image processing
+]
+
 # All features
 all = [
     "camelot-py[cv]>=0.11.0",
@@ -77,6 +83,8 @@ all = [
     "numpy>=1.24.0",
     "openai>=1.0.0",
     "anthropic>=0.7.0",
+    "streamlit>=1.28.0",
+    "pillow>=10.0.0",
 ]
 
 [project.scripts]

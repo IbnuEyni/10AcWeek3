@@ -45,15 +45,17 @@ class QueryAgent:
         self, 
         query_text: str, 
         doc_id: Optional[str] = None,
-        method: str = "auto"
+        method: str = "auto",
+        description: Optional[str] = None  # Unused, kept for compatibility
     ) -> ProvenanceChain:
         """
-        Execute query with automatic method selection
+        Execute query - just pass the query text, method is auto-selected
         
         Args:
-            query_text: Natural language query
+            query_text: Natural language query (required)
             doc_id: Optional document ID to restrict search
-            method: auto | pageindex | semantic | structured
+            method: auto (default) | pageindex | semantic | structured
+            description: Unused parameter for compatibility
             
         Returns:
             ProvenanceChain with answer and citations

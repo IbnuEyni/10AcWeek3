@@ -67,6 +67,14 @@ class ExtractionRouter:
             print(f"Extracting using {strategy.strategy_name}...")  # Debug print
             extracted_doc, confidence = strategy.extract(pdf_path, profile)
             monitor.checkpoint("extraction_complete")
+
+            # If the extraction produced no content, treat as failed/low confidence
+            if not (extracted_doc.text_blocks or extracted_doc.tables or extracted_doc.figures):
+                logger.warning(
+                    f"Extraction produced no output with {strategy.strategy_name}; escalating to next strategy"
+                )
+                confidence = 0.0
+
             console.log(f"Extraction confidence: {confidence:.2f}", style="bold yellow")
             # Record initial attempt
             escalation_history.attempts.append(EscalationAttempt(

@@ -52,11 +52,10 @@ class ModernOCR:
         except ImportError:
             logger.debug("Surya OCR not available")
         
-        # Cloud fallbacks
-        if os.getenv("GEMINI_API_KEY"):
-            available.append("gemini")
-        
-        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
+        # Cloud fallbacks (prefer Google Cloud Vision)
+        # - If GOOGLE_APPLICATION_CREDENTIALS is set, use the Vision API.
+        # - If only GEMINI_API_KEY is set, allow it to act as an API key for the Vision API.
+        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS") or os.getenv("GEMINI_API_KEY"):
             available.append("google_vision")
         
         if not available:
@@ -102,9 +101,8 @@ class ModernOCR:
             return self._paddleocr(image_data, need_boxes)
         elif engine == "surya":
             return self._surya_ocr(image_data)
-        elif engine == "gemini":
-            return self._gemini_ocr(image_data)
-        elif engine == "google_vision":
+        elif engine in ("gemini", "google_vision"):
+            # Treat Gemini key as an API key for Google Cloud Vision
             return self._google_vision_ocr(image_data)
         return None
     
@@ -239,37 +237,21 @@ class ModernOCR:
             logger.debug(f"Surya OCR error: {e}")
         
         return None
-        """Gemini Vision OCR"""
-        try:
-            import google.generativeai as genai
-            from PIL import Image
-            import io
-            
-            genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-            model = genai.GenerativeModel('gemini-2.5-flash')  # Updated to stable model
-            
-            # Convert bytes to PIL Image
-            image = Image.open(io.BytesIO(image_data))
-            
-            prompt = "Extract all handwritten text from this image. Return only the text, no explanations."
-            response = model.generate_content([prompt, image])
-            
-            if response.text:
-                # Gemini doesn't provide confidence, use default
-                return OCRResult(response.text.strip(), 0.85, "gemini")
-        
-        except Exception as e:
-            logger.debug(f"Gemini OCR error: {e}")
-        
-        return None
-    
-    
+
     def _google_vision_ocr(self, image_data: bytes) -> Optional[OCRResult]:
         """Google Cloud Vision OCR"""
         try:
             from google.cloud import vision
+            from google.api_core.client_options import ClientOptions
             
-            client = vision.ImageAnnotatorClient()
+            # If GOOGLE_APPLICATION_CREDENTIALS is not set, allow using GEMINI_API_KEY as an API key
+            api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+            client_options = None
+            if api_key:
+                client_options = ClientOptions(api_key=api_key)
+                logger.debug("Using API key for Google Vision client")
+            
+            client = vision.ImageAnnotatorClient(client_options=client_options)
             image = vision.Image(content=image_data)
             
             response = client.text_detection(image=image)

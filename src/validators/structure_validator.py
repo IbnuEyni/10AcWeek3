@@ -9,7 +9,18 @@ class StructureValidator:
     
     def validate_extraction(self, doc: ExtractedDocument) -> Dict[str, bool]:
         """Validate extraction quality"""
+        if not (doc.text_blocks or doc.tables or doc.figures):
+            # Extraction produced nothing; treat as invalid so the router can escalate
+            return {
+                'has_content': False,
+                'reading_order_valid': False,
+                'tables_have_headers': False,
+                'bboxes_valid': False,
+                'no_overlapping_blocks': False,
+            }
+
         return {
+            'has_content': True,
             'reading_order_valid': self._check_reading_order(doc.text_blocks),
             'tables_have_headers': self._check_table_headers(doc.tables),
             'bboxes_valid': self._check_bboxes(doc.text_blocks, doc.tables),

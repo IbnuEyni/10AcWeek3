@@ -18,8 +18,10 @@ class VisionExtractor(BaseExtractor):
     """Vision-augmented extraction with Bounding-Box Micro-Cropping for cost optimization"""
     
     def __init__(self, api_key: str = None, config_path: str = None):
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.model = "gemini-2.5-flash"
+        # Use Google Cloud Vision (preferred) for OCR-based extraction.
+        # Accept either service account credentials (GOOGLE_APPLICATION_CREDENTIALS) or an API key.
+        self.api_key = api_key or os.getenv("GOOGLE_APPLICATION_CREDENTIALS") or os.getenv("GEMINI_API_KEY")
+        self.use_gcp_vision = bool(self.api_key)
         
         # Load configuration
         if config_path is None:
@@ -34,17 +36,8 @@ class VisionExtractor(BaseExtractor):
         self.MAX_COST_PER_DOC = self.config['cost']['vlm_budget_cap']
         self.domain_prompts = self.config['domain_prompts']
         
-        if self.api_key:
-            try:
-                import google.generativeai as genai
-                genai.configure(api_key=self.api_key)
-                self.client = genai.GenerativeModel(self.model)
-                self.use_gemini = True
-            except ImportError:
-                print("Warning: google-generativeai not available")
-                self.use_gemini = False
-        else:
-            self.use_gemini = False
+        if not self.use_gcp_vision:
+            print("Warning: GCP Vision credentials not configured; vision-augmented extraction disabled")
         
         # Stage 2 enhancements
         self.figure_extractor = FigureExtractor()
@@ -96,8 +89,8 @@ class VisionExtractor(BaseExtractor):
             except Exception as e:
                 print(f"Docling pre-processing failed: {e}, falling back to pure vision")
         
-        # Step 2: Use Gemini for OCR on low-quality/scanned regions
-        if self.use_gemini and len(text_blocks) < profile.total_pages:
+        # Step 2: Use GCP Vision for OCR on low-quality/scanned regions
+        if self.use_gcp_vision and len(text_blocks) < profile.total_pages:
             # Only process pages that Docling couldn't extract well
             images = self._pdf_to_images(pdf_path)
             
@@ -105,10 +98,10 @@ class VisionExtractor(BaseExtractor):
                 # Skip if Docling already extracted this page well
                 existing_content = [b for b in text_blocks if b.bbox.page == page_num]
                 if existing_content and len(existing_content[0].content) > 100:
-                    continue  # Docling got good content, skip Gemini
+                    continue  # Docling got good content, skip Vision OCR
                 
-                # Call Gemini for OCR on this page
-                extracted_content = self._call_gemini(image, page_num, profile)
+                # Call Google Cloud Vision for OCR on this page
+                extracted_content = self._call_gcp_vision(image, page_num)
                 
                 if extracted_content:
                     bbox = BoundingBox(x0=0, y0=0, x1=1000, y1=1000, page=page_num)
@@ -141,7 +134,7 @@ class VisionExtractor(BaseExtractor):
                         pass  # OCR is optional enhancement
         else:
             # Fallback: placeholder extraction
-            print("Warning: Gemini API not configured, using placeholder")
+            print("Warning: GCP Vision API not configured, using placeholder")
             for page_num in range(min(profile.total_pages, 5)):
                 bbox = BoundingBox(x0=0, y0=0, x1=1000, y1=1000, page=page_num)
                 text_blocks.append(TextBlock(
@@ -157,7 +150,7 @@ class VisionExtractor(BaseExtractor):
         if figures and text_blocks:
             figures = self.caption_binder.bind_figures_to_captions(figures, text_blocks)
         
-        confidence = 0.8 if self.use_gemini else 0.5  # Match test expectations
+        confidence = 0.8 if self.use_gcp_vision else 0.5  # Match test expectations
         
         extracted_doc = ExtractedDocument(
             doc_id=profile.doc_id,
@@ -181,55 +174,30 @@ class VisionExtractor(BaseExtractor):
             return []
     
     def _call_gemini(self, image, page_num: int, profile: DocumentProfile) -> str:
-        """Call Gemini API with fallback to GCP Vision on quota errors"""
-        if not self.use_gemini:
+        """Legacy wrapper - calls GCP Vision OCR."""
+        if not self.use_gcp_vision:
             return ""
-        
-        # Get domain-specific prompt from config
-        domain_hint = self.domain_prompts.get(
-            profile.domain_hint, 
-            self.domain_prompts.get("general", "Extract all text and structured data.")
-        )
-        
-        prompt = f"""You are a document extraction expert. Extract all text from this document page.
-
-{domain_hint}
-
-Instructions:
-1. Preserve the reading order and structure
-2. Extract tables as structured text with clear headers and rows
-3. Include all visible text, numbers, and data
-4. Maintain formatting where important (lists, sections, etc.)
-5. If there are tables, format them clearly with | separators
-
-Return only the extracted text, no explanations."""
-        
-        try:
-            response = self.client.generate_content([prompt, image])
-            return response.text
-        except Exception as e:
-            error_str = str(e)
-            # Check for quota error
-            if "429" in error_str or "quota" in error_str.lower():
-                print(f"Gemini quota exceeded on page {page_num}, falling back to GCP Vision OCR")
-                return self._call_gcp_vision(image, page_num)
-            else:
-                print(f"Gemini API error on page {page_num}: {error_str}")
-                return ""
+        return self._call_gcp_vision(image, page_num)
     
     def _call_gcp_vision(self, image, page_num: int) -> str:
         """Fallback to GCP Vision API for OCR"""
         try:
             from google.cloud import vision
+            from google.api_core.client_options import ClientOptions
             import io
-            
-            client = vision.ImageAnnotatorClient()
-            
+
+            # Allow using an API key (e.g., GEMINI_API_KEY) if no service account creds are configured
+            client_options = None
+            if self.api_key and not os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
+                client_options = ClientOptions(api_key=self.api_key)
+
+            client = vision.ImageAnnotatorClient(client_options=client_options)
+
             # Convert PIL image to bytes
             img_byte_arr = io.BytesIO()
             image.save(img_byte_arr, format='PNG')
             img_byte_arr = img_byte_arr.getvalue()
-            
+
             vision_image = vision.Image(content=img_byte_arr)
             response = client.text_detection(image=vision_image)
             texts = response.text_annotations
@@ -243,7 +211,7 @@ Return only the extracted text, no explanations."""
             return ""
     
     def estimate_cost(self, profile: DocumentProfile) -> float:
-        """Estimate Gemini cost"""
+        """Estimate Vision API cost"""
         return self.cost_per_image * profile.total_pages
     
     @property
@@ -268,7 +236,7 @@ Return only the extracted text, no explanations."""
         Returns:
             List of extracted content for each element
         """
-        if not self.use_gemini:
+        if not self.use_gcp_vision:
             return []
         
         results = []
@@ -343,8 +311,8 @@ Return format:
             prompt = "Extract all visible text from this image snippet."
         
         try:
-            response = self.client.generate_content([prompt, cropped_image])
-            return response.text
+            # Use GCP Vision OCR on the cropped image
+            return self._call_gcp_vision(cropped_image, page_num=0)
         except Exception as e:
-            print(f"Gemini extraction from crop failed: {e}")
+            print(f"Vision OCR extraction from crop failed: {e}")
             return ""

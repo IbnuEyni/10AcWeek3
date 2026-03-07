@@ -73,6 +73,24 @@ GEMINI_API_KEY=your_key_here  # For vision extraction
 
 ## Quick Start
 
+### Interactive Demo (Recommended)
+
+```bash
+# Install demo dependencies
+uv pip install -e ".[demo]"
+
+# Launch interactive web app
+streamlit run streamlit_app.py
+```
+
+The demo showcases all 4 stages:
+1. **Triage** - Document profiling and strategy selection
+2. **Extraction** - Side-by-side PDF vs extracted content
+3. **PageIndex** - Hierarchical navigation tree
+4. **Query** - Natural language Q&A with provenance
+
+See [DEMO_GUIDE.md](DEMO_GUIDE.md) for detailed walkthrough.
+
 ### Basic Pipeline (Stages 1-3)
 
 ```python
@@ -237,6 +255,23 @@ chunking:
 ```
 
 ## Demo Scripts
+
+### Interactive Web Demo
+
+```bash
+# Install and run Streamlit demo
+uv pip install -e ".[demo]"
+streamlit run streamlit_app.py
+```
+
+Features:
+- 📤 Upload any PDF document
+- 🔍 View triage classification and strategy selection
+- 📊 See extraction results side-by-side with original PDF
+- 🗂️ Navigate PageIndex hierarchy
+- 💬 Ask questions with full provenance tracking
+
+### Command-Line Scripts
 
 ```bash
 # Run complete 5-stage pipeline

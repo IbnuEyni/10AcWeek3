@@ -1,3 +1,4 @@
+import logging
 from typing import Tuple, List
 from .base import BaseExtractor
 from ..models.extracted_document import (
@@ -10,6 +11,8 @@ from .caption_binder import CaptionBinder
 from .column_detector import ColumnDetector
 from ..utils.docling_helper import DoclingHelper
 from ..validators.structure_validator import StructureValidator
+
+logger = logging.getLogger(__name__)
 
 
 class LayoutExtractor(BaseExtractor):
@@ -30,6 +33,10 @@ class LayoutExtractor(BaseExtractor):
         """Extract with layout awareness using Docling FAST mode or pdfplumber fallback"""
         if self.use_docling:
             extracted_doc, confidence = self._extract_with_docling(pdf_path, profile)
+            # If Docling produced no content, fall back to pdfplumber extraction
+            if not (extracted_doc.text_blocks or extracted_doc.tables or extracted_doc.figures):
+                logger.warning("Docling produced no extraction content, falling back to pdfplumber")
+                extracted_doc, confidence = self._extract_fallback(pdf_path, profile)
         else:
             extracted_doc, confidence = self._extract_fallback(pdf_path, profile)
         

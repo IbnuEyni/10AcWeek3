@@ -1,6 +1,6 @@
 """
 Fact Extractor - AI-Native (LLM Structured Outputs)
-Uses Gemini Flash 2.5 with Pydantic schemas instead of regex
+Uses DeepSeek API with Pydantic schemas instead of regex.
 """
 
 import sqlite3
@@ -11,6 +11,9 @@ from pydantic import BaseModel, Field
 from ..models.extracted_document import ExtractedDocument
 from ..models.ldu import LDU
 from ..logging_config import get_logger
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = get_logger("fact_extractor_ai")
 
@@ -35,21 +38,113 @@ class FactExtractorAI:
         self.db_path = db_path
         self._init_database()
         
-        # Initialize Gemini
-        self.gemini_available = False
-        try:
-            import google.generativeai as genai
-            api_key = os.getenv("GEMINI_API_KEY")
-            if api_key:
-                genai.configure(api_key=api_key)
-                self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
-                self.gemini_available = True
-                logger.info("Gemini Flash 2.5 initialized for fact extraction")
-            else:
-                logger.warning("GEMINI_API_KEY not set, fact extraction disabled")
-        except ImportError:
-            logger.warning("google.generativeai not available")
-    
+        # Initialize LLM client (OpenAI by default)
+        self.llm_available = False
+        self.llm_provider = None
+        self.llm_model = None
+
+        # Only DeepSeek is supported for fact extraction in this deployment
+        deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
+        deepseek_api_url = os.getenv("DEEPSEEK_API_URL", "https://api.deepseek.ai/v1/completions")
+        if deepseek_api_key:
+            try:
+                import requests
+
+                self.llm_provider = "deepseek"
+                self.llm_model = os.getenv("DEEPSEEK_MODEL", "deepseek-v2")
+                self.llm_client = requests
+                self.deepseek_api_key = deepseek_api_key
+                self.deepseek_api_url = deepseek_api_url
+                self.llm_available = True
+                logger.info(f"DeepSeek model '{self.llm_model}' initialized for fact extraction")
+            except ImportError:
+                logger.warning("Requests library not available for DeepSeek API calls")
+            except Exception as e:
+                logger.warning(f"DeepSeek initialization failed: {e}")
+
+        if not self.llm_available:
+            logger.warning("No LLM configured for fact extraction (set DEEPSEEK_API_KEY)")
+
+    def _call_llm(self, prompt: str) -> str:
+        """Call configured LLM and return the raw text response."""
+        if not self.llm_available:
+            raise RuntimeError("No LLM configured")
+
+        if self.llm_provider == "deepseek":
+            try:
+                headers = {
+                    "Authorization": f"Bearer {self.deepseek_api_key}",
+                    "Content-Type": "application/json",
+                }
+                payload = {
+                    "model": self.llm_model,
+                    "prompt": prompt,
+                    "temperature": 0.1,
+                    "max_tokens": 1500,
+                }
+                response = self.llm_client.post(
+                    self.deepseek_api_url,
+                    json=payload,
+                    headers=headers,
+                    timeout=30,
+                )
+                response.raise_for_status()
+                data = response.json()
+
+                # DeepSeek response formats vary; try common fields
+                if isinstance(data, dict):
+                    if "choices" in data and data["choices"]:
+                        first = data["choices"][0]
+                        if isinstance(first, dict) and "text" in first:
+                            return first["text"]
+                        if isinstance(first, dict) and "message" in first:
+                            return first["message"].get("content", "")
+                    if "output" in data:
+                        if isinstance(data["output"], list):
+                            return "\n".join(str(x) for x in data["output"])
+                        return str(data["output"])
+
+                # Fallback: return raw string
+                return str(data)
+            except Exception as e:
+                logger.debug(f"DeepSeek API unavailable: {e}")
+                raise
+
+        raise RuntimeError(f"Unsupported LLM provider: {self.llm_provider}")
+
+    def _normalize_json_response(self, text: str) -> str:
+        """Normalize LLM output so it can be parsed as JSON."""
+        if not text:
+            return text
+
+        txt = text.strip()
+
+        # Extract JSON from Markdown-style code fences if present
+        if "```" in txt:
+            parts = txt.split("```")
+            # Pick the first candidate that looks like JSON
+            candidates = [p.strip() for p in parts if p.strip().startswith(('{', '['))]
+            if candidates:
+                txt = candidates[0]
+
+        # Extract JSON object/array if wrapped in extraneous text
+        if not txt.startswith(('{', '[')) and '{' in txt and '}' in txt:
+            start = txt.find('{')
+            end = txt.rfind('}')
+            if end > start:
+                txt = txt[start : end + 1]
+        if not txt.startswith(('{', '[')) and '[' in txt and ']' in txt:
+            start = txt.find('[')
+            end = txt.rfind(']')
+            if end > start:
+                txt = txt[start : end + 1]
+
+        # Stripped quotes around JSON
+        if (txt.startswith('"') and txt.endswith('"')) or (txt.startswith("'") and txt.endswith("'")):
+            txt = txt[1:-1]
+
+        return txt
+
     def _init_database(self):
         """Initialize SQLite database"""
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
@@ -98,8 +193,8 @@ class FactExtractorAI:
         Returns:
             Number of facts extracted
         """
-        if not self.gemini_available:
-            logger.warning("Gemini not available, skipping fact extraction")
+        if not self.llm_available:
+            logger.warning("LLM not available, skipping fact extraction")
             return 0
         
         logger.info(f"Extracting facts from {extracted_doc.doc_id}")
@@ -128,7 +223,6 @@ class FactExtractorAI:
         if not table.rows or len(table.rows) < 2:
             return []
         
-        # Format table as text
         table_text = self._format_table(table)
         
         prompt = f"""Extract key-value facts from this table. Focus on numerical data, financial figures, and important metrics.
@@ -136,23 +230,16 @@ class FactExtractorAI:
 Table:
 {table_text}
 
-Return a JSON array of facts with keys: key, value, unit (optional), context (optional)."""
+Return ONLY valid JSON (no explanations). The output must be an object with a single key "facts" whose value is an array of objects with keys: key, value, unit (optional), context (optional)."""
         
         try:
-            response = self.model.generate_content(
-                prompt,
-                generation_config={
-                    "response_mime_type": "application/json",
-                    "temperature": 0.1
-                }
-            )
-            
-            # Parse response
+            response_text = self._call_llm(prompt)
+            response_text = self._normalize_json_response(response_text)
+
             import json
-            result = json.loads(response.text)
+            result = json.loads(response_text)
             fact_list = FactList(**result)
             
-            # Convert to dict format
             facts = []
             for fact in fact_list.facts:
                 facts.append({
@@ -172,7 +259,7 @@ Return a JSON array of facts with keys: key, value, unit (optional), context (op
             return facts
             
         except Exception as e:
-            logger.error(f"LLM fact extraction from table failed: {e}")
+            logger.debug(f"Skipping table fact extraction: {e}")
             return []
     
     def _extract_from_text_llm(self, ldu: LDU, doc_id: str) -> List[Dict[str, Any]]:
@@ -182,23 +269,16 @@ Return a JSON array of facts with keys: key, value, unit (optional), context (op
 Text:
 {ldu.content[:1000]}
 
-Return a JSON array of facts with keys: key, value, unit (optional), context (optional)."""
+Return ONLY valid JSON (no explanations). The output must be an object with a single key "facts" whose value is an array of objects with keys: key, value, unit (optional), context (optional)."""
         
         try:
-            response = self.model.generate_content(
-                prompt,
-                generation_config={
-                    "response_mime_type": "application/json",
-                    "temperature": 0.1
-                }
-            )
-            
-            # Parse response
+            response_text = self._call_llm(prompt)
+            response_text = self._normalize_json_response(response_text)
+
             import json
-            result = json.loads(response.text)
+            result = json.loads(response_text)
             fact_list = FactList(**result)
             
-            # Convert to dict format
             facts = []
             page_ref = ldu.page_refs[0] if ldu.page_refs else 0
             
@@ -220,7 +300,7 @@ Return a JSON array of facts with keys: key, value, unit (optional), context (op
             return facts
             
         except Exception as e:
-            logger.error(f"LLM fact extraction from text failed: {e}")
+            logger.debug(f"Skipping text fact extraction: {e}")
             return []
     
     def _format_table(self, table: Any) -> str:

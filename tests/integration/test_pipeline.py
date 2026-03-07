@@ -19,8 +19,9 @@ class TestPipelineIntegration:
     def extraction_router(self, tmp_path):
         return ExtractionRouter(ledger_path=str(tmp_path / "ledger.jsonl"))
     
+    @patch('fitz.open')
     @patch('src.utils.pdf_analyzer.pdfplumber.open')
-    def test_full_pipeline_native_digital(self, mock_open, triage_agent, 
+    def test_full_pipeline_native_digital(self, mock_pdfplumber_open, mock_fitz_open, triage_agent, 
                                           extraction_router, tmp_path):
         """Test complete pipeline for native digital PDF"""
         # Setup mock PDF with proper metrics for native digital detection
@@ -37,11 +38,27 @@ class TestPipelineIntegration:
             page.find_tables.return_value = []
             page.extract_tables.return_value = []
         
-        mock_open.return_value.__enter__.return_value = mock_pdf
+        mock_pdfplumber_open.return_value.__enter__.return_value = mock_pdf
+
+        # Mock PyMuPDF (fitz) font detection to treat as native digital
+        mock_fitz_doc = MagicMock()
+        mock_fitz_doc.page_count = 5
+        mock_fitz_doc.__getitem__.return_value.get_fonts.return_value = ["/F1"]
+        mock_fitz_open.return_value = mock_fitz_doc
         
         # Create test PDF
-        test_pdf = tmp_path / "test_financial_report.pdf"
-        test_pdf.write_bytes(b"%PDF-1.4\n")
+        test_pdf = tmp_path / "data/tax_expenditure_ethiopia_2021_22.pdf"
+        test_pdf.parent.mkdir(parents=True, exist_ok=True)
+        # Minimal valid PDF so MuPDF/fitz can open it during pipeline execution
+        test_pdf.write_bytes(
+            b"%PDF-1.4\n"
+            b"1 0 obj<< /Type /Catalog /Pages 2 0 R>>endobj\n"
+            b"2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1>>endobj\n"
+            b"3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R>>endobj\n"
+            b"4 0 obj<< /Length 44>>stream\nBT /F1 24 Tf 72 712 Td (Hello) Tj ET\nendstream\nendobj\n"
+            b"xref\n0 5\n0000000000 65535 f \n0000000010 00000 n \n0000000079 00000 n \n0000000174 00000 n \n0000000266 00000 n \n"
+            b"trailer<< /Root 1 0 R /Size 5>>\nstartxref\n354\n%%EOF\n"
+        )
         
         # Run pipeline
         profile = triage_agent.profile_document(str(test_pdf))
@@ -50,7 +67,7 @@ class TestPipelineIntegration:
         assert profile.domain_hint == "financial"
         
         extracted = extraction_router.extract(str(test_pdf), profile)
-        assert extracted.doc_id == "test_financial_report"
+        assert extracted.doc_id == "tax_expenditure_ethiopia_2021_22"
         # Accept either fast_text or layout_aware (both valid for native PDFs)
         assert extracted.extraction_strategy in ["fast_text", "layout_aware"]
     
