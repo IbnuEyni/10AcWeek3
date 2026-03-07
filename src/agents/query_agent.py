@@ -331,8 +331,28 @@ class QueryAgent:
         if not ldus:
             return "No relevant information found."
         
-        # Simple extraction: return most relevant LDU content
-        return f"Based on the document: {ldus[0].content[:300]}..."
+        # Combine relevant LDU content
+        combined_content = "\n\n".join([ldu.content[:500] for ldu in ldus[:3]])
+        
+        # Simple answer based on query type
+        query_lower = query.lower()
+        
+        if "revenue" in query_lower or "total" in query_lower:
+            # Look for numbers in content
+            import re
+            numbers = re.findall(r'\$?[\d,]+(?:\.\d+)?', combined_content)
+            if numbers:
+                return f"Based on the document, relevant figures include: {', '.join(numbers[:5])}. See citations for context."
+        
+        if "table" in query_lower:
+            table_count = sum(1 for ldu in ldus if ldu.content_type == "table")
+            return f"Found {table_count} tables in the relevant sections. See citations for details."
+        
+        if "summarize" in query_lower or "summary" in query_lower:
+            return f"Summary: {combined_content[:400]}... (See full citations below)"
+        
+        # Default: return first relevant content
+        return f"{combined_content[:400]}... (See citations for full context)"
     
     def _create_citations(self, ldus: List[LDU], doc_id: str) -> List[SourceCitation]:
         """Create citations from LDUs"""
@@ -341,13 +361,23 @@ class QueryAgent:
         for ldu in ldus[:3]:  # Top 3 sources
             page_ref = ldu.page_refs[0] if ldu.page_refs else 0
             
+            # Create bbox dict if available
+            bbox_dict = None
+            if hasattr(ldu, 'bbox') and ldu.bbox:
+                bbox_dict = {
+                    "x0": ldu.bbox.x0 if hasattr(ldu.bbox, 'x0') else 0,
+                    "y0": ldu.bbox.y0 if hasattr(ldu.bbox, 'y0') else 0,
+                    "x1": ldu.bbox.x1 if hasattr(ldu.bbox, 'x1') else 100,
+                    "y1": ldu.bbox.y1 if hasattr(ldu.bbox, 'y1') else 100,
+                }
+            
             citation = SourceCitation(
                 document_name=f"{doc_id}.pdf",
                 doc_id=doc_id,
                 page_number=page_ref,
-                bbox=None,  # Would need to extract from LDU metadata
+                bbox=bbox_dict,
                 content_hash=ldu.content_hash,
-                excerpt=ldu.content[:200],
+                excerpt=ldu.content[:300],
                 ldu_id=ldu.ldu_id
             )
             citations.append(citation)
