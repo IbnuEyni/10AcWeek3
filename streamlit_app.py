@@ -195,7 +195,7 @@ def show_stage3_pageindex(extracted_doc, pdf_path: str):
             st.markdown(f"{indent}📁 **{section.title}** (Pages {section.page_start}-{section.page_end})")
             st.caption(f"{indent}   LDUs: {len(section.ldu_ids)} | Types: {', '.join(section.data_types_present)}")
             
-            for child in section.children:
+            for child in section.child_sections:
                 render_section_tree(child, level + 1)
         
         for section in page_index.root_sections[:3]:  # Show first 3 sections
