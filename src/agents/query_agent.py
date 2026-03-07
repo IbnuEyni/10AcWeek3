@@ -345,7 +345,7 @@ class QueryAgent:
                 return f"Based on the document, relevant figures include: {', '.join(numbers[:5])}. See citations for context."
         
         if "table" in query_lower:
-            table_count = sum(1 for ldu in ldus if ldu.content_type == "table")
+            table_count = sum(1 for ldu in ldus if ldu.chunk_type == "table")
             return f"Found {table_count} tables in the relevant sections. See citations for details."
         
         if "summarize" in query_lower or "summary" in query_lower:
