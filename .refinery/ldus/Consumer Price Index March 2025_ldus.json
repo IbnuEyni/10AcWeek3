@@ -1,0 +1,681 @@
+[
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_0",
+    "content": "Issue No. 21/2017 March EFY2017\n--------------------------------------------------\n1. Summary\nThe Consumer Price Index (CPI), a key economic statistics, is surveyed, analyzed, and\nmade available to data users on a monthly basis.\nThe year-on-year, general inflation rate (annual percentage change) in the country stood at\n13.6 percent for the month of March EFY2017. A year earlier (in March EFY2016), the rate\nwas 26.2 percent. The month-on-month general inflation rate increased by 2.7 percent for\nthe month of March-EFY2017. It was 4.0 percent in March EFY2016.\nGeneral inflation encompasses of two main divisions and twenty-one groups of expendi-\ntures. These divisions registered the following price changes during the month of March\nEFY2017 compared with March EFY2016.\n2. Food & Non-alcoholic Beverages and Non-Food Inflation (Year-on-Year)\nThe year-on-year inflation and the month-to-month inflation rates helps to gauge the cur-\nrent inflation trajectory, as they capture short-term fluctuations in prices and provides an\nimmediate indicator of inflationary pressures. Particularly, the month-to-month is also cru-\ncial for monitoring changes in consumer prices and identifying any sudden spikes or de-\nclines in inflation.\nThe year-on-year inflation and the month-to-month inflation rates helps to gauge the cur-\nrent inflation trajectory, as they capture short-term fluctuations in prices and provides an\nimmediate indicator of inflationary pressures. Particularly, the month-to-month is also cru-\ncial for monitoring changes in consumer prices and identifying any sudden spikes or de-\nclines in inflation.\nFood & Non-alcoholic Beverages index\nThe year-on-year inflation rate, also known as the annual inflation rate, measures the per-\ncentage change in overall price levels from one year to the same month in the previous year.\nAccordingly, the year-on-year inflation rate of the Food and Non-alcoholic component of the\nCPI, for the month of March 2017 EFY stood at 11.9%. This implies that the CPI of Food and\nNon-Alcoholic Beverages has, on average, increased by 11.9% compared to March EFY2016.\nThe major contributing factors for the rise of food inflation for March EFY2017 was the ob-\nserved increase in the average prices of major food commodities such as bread and cereals\n(1.2%), vegetables (6.1%), meat (17.8%), Sugar, jam, honey & chocolate (28.8%), Milk, Cheese\nand Eggs (8.2%), Oils and Fats (36.3%), Fruit (13.4%), and Food products n.e.c (26.7%).\n",
+    "chunk_type": "table",
+    "page_refs": [
+      0
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 0
+      }
+    ],
+    "parent_section": null,
+    "token_count": 490,
+    "content_hash": "c98de9f2e9be1d38",
+    "metadata": {
+      "table_id": "table_0_0",
+      "rows": 4,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_1",
+    "content": "Issue No. 21/2017 Page 2 |  |  |  | \n--------------------------------------------------\nBeginning from March-EFY 2016 the magnitude of the inflation rate steadily declined up to March-EFY\n2017. In March EFY-2017 General inflation was 13.6% as compared to the one observed in March-\nEFY2016. |  |  |  | \nBeginning from March-EFY 2016 the magnitude of the inflation rate steadily declined up to March-EFY\n2017. In March EFY-2017 General inflation was 13.6% as compared to the one observed in March-\nEFY2016. |  |  |  | \nMonth/Year | General | Food | Non-Food | \nMarch EFY2009 - June EFY2010 | 14.4 | 13.4 | 15.9 | \n |  |  |  | \nTable 1: General, Food and Non-Food\nMarch EFY 2010 - JuneEFY2011 | Inflation Rate (%, Year | -on-Year) March EFY20 | 16 - March EFY201 7 | \n | 12.6 | 13.1 | 11.9 | \nMarch EFY2011 - June EFY2012 | 19.9 | 23.3 | 15.9 | \nMarch EFY2012 - June EFY2013 | 20.2 | 23.2 | 16.4 | \nMarch EFY2013 - June EFY2014 | 33.8 | 40.3 | 25.2 | \nMarch EFY2014 - June EFY2015 | 32.5 | 31.7 | 33.9 | \nMarch EFY2015 - June EFY2016 | 26.6 | 28.1 | 24.3 | \n |  |  |  | \nMarch-EFY 2016 | 26.2 | 29.0 | 22.0 | \nApril | 23.3 | 27.0 | 18.0 | \nMay | 23.3 | 25.5 | 20.0 | \nJune | 19.9 | 22.7 | 15.8 | \nJuly | 18.6 | 20.6 | 15.6 | \nAugust | 17.2 | 18.8 | 14.7 | \nSeptember | 17.5 | 19.6 | 14.3 | \nOctober | 16.1 | 19.2 | 11.6 | \nNovember | 16.9 | 18.5 | 14.4 | \nDecember | 17.0 | 18.7 | 14.4 | \nJanuary | 15.5 | 15.8 | 15.0 | \nFebruary | 15.0 | 14.6 | 15.6 | \nMarch-EFY 2017 | 13.6 | 11.9 | 16.2 | \n |  |  |  | ",
+    "chunk_type": "table",
+    "page_refs": [
+      1
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 1
+      }
+    ],
+    "parent_section": null,
+    "token_count": 418,
+    "content_hash": "6916284af166193d",
+    "metadata": {
+      "table_id": "table_1_0",
+      "rows": 27,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_2",
+    "content": "Issue No. 21/2017 Page 3\n--------------------------------------------------\nFig 1: Food and Non-Food Inflation (%, Year-on-Year), March EFY2016 - March EFY2017\nNon-Food Inflation and Alcoholic Beverages (Year-on-Year)\nAs can be seen from the above figure, the non-food year-on-year inflation rate increased in March-\nETY2017 as compared to last month while the Food inflation decreased in magnitude. The Non-Food\ninflation increased by 16.2 percent in the same period. Particularly, Alcoholic Beverages and Tobacco\nincreased by (15.2%); Housing, water, electricity & other fuel component (17.4%); Furnishings, house-\nhold equipment & routine maintenance of the House (15.4%); Health (12.7%); Transport (32.5%); Com-\nmunication (2.0%); Education (23.3%); Restaurants and hotels (18.3%) and Miscellaneous goods and\nservices (18.4%) have contributed for the rise in non-food inflation rate in March EFY2017.",
+    "chunk_type": "table",
+    "page_refs": [
+      2
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 2
+      }
+    ],
+    "parent_section": null,
+    "token_count": 164,
+    "content_hash": "8ef3bdf438eb3018",
+    "metadata": {
+      "table_id": "table_2_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_3",
+    "content": "Issue No. 21/2017 Page 4\n--------------------------------------------------\nMajor sub divisions in the food and non-food commodities (year-on-Year).\nWhen we look at major division of food and non-food commodities, which holds large share in the\ncommodity basket, the magnitude of inflation rate at March EFY2017 showed a declining situation\nfor Food as compared to the previous month. From Food and Non-Alcoholic Beverage aspect, the\nhighest weight is hold by Bread and Cereals, Vegetables, Other-Food products, Non-Alcoholic Bev-\nerage, and Meat; whose inflation at March EFY2017 is recorded an increase for Bread & Cereals\n(1.2%); Vegetables (6.1%); Other-Food products (Food products not elsewhere classified) (26.7%);\nMeat (17.8%) and Non-Alcoholic Beverages & coffee (50.2%).\nSimilarly, during March 2017 EFY the year-on-year inflation rate of the major Non- Food items of\nHousing, Water, Electricity, Gas, & Other Fuels (17.4%); Restaurants and Hotels (18.3%); Alco-\nholic Beverages & Tobacco (15.2%); Furnishings, Household Equipment & Routine Household\nMaintenance of the House (15.4%) and Clothing and Footwear (8.7%).\nTable 2. Major sub divisions in the food and non-food commodities (year-on-Year).\nCPI Items Items Wight in % change on Year-on-Year % change in Month-to-\nCPI (%) Inflation March EFY2016 Month inflation July\ncompared with March EFY2017 compared to\nEFY2017 March EFY2017\nMajor Food and Non-Alcoholic Bever-\n53.5 11.9 2.5\nage components\nBread and Cereals 17.1 1.2 1.4\nVegetables 12.3 6.1 0.5\nOther-Food products 5.6 26.7 3.0\nNon-Alcoholic Beverage 5.1 50.2 6.4\nMeat 4.1 17.8 1.4\nMajor Non-Food Components 46.5 16.2 3.2\nHousing, Water, Electricity, Gas and Other\n16.8 17.4 2.5\nFuels\nClothing and Footwear 5.7 8.7 2.8\nRestaurants and Hotels 5.3 18.3 4.7\nAlcoholic Beverages and Tobacco 4.9 15.2 2.4\nFurnishings, Household Equipment and 4.7 15.4 4.1\nRoutine Maintenance of the House",
+    "chunk_type": "table",
+    "page_refs": [
+      3
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 3
+      }
+    ],
+    "parent_section": null,
+    "token_count": 377,
+    "content_hash": "284ccef198479ddd",
+    "metadata": {
+      "table_id": "table_3_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_4",
+    "content": "CPI Items | Items Wight in\nCPI (%) | % change on Year-on-Year\nInflation March EFY2016\ncompared with March\nEFY2017 | % change in Month-to-\nMonth inflation July\nEFY2017 compared to\nMarch EFY2017\n--------------------------------------------------\nMajor Food and Non-Alcoholic Bever-\nge components | 53.5 | 11.9 | 2.5\nread and Cereals | 17.1 | 1.2 | 1.4\nVegetables | 12.3 | 6.1 | 0.5\nOther-Food products | 5.6 | 26.7 | 3.0\nNon-Alcoholic Beverage | 5.1 | 50.2 | 6.4\nMeat | 4.1 | 17.8 | 1.4\nMajor Non-Food Components | 46.5 | 16.2 | 3.2\nHousing, Water, Electricity, Gas and Other\nuels | 16.8 | 17.4 | 2.5\nClothing and Footwear | 5.7 | 8.7 | 2.8\nestaurants and Hotels | 5.3 | 18.3 | 4.7\nAlcoholic Beverages and Tobacco | 4.9 | 15.2 | 2.4\nurnishings, Household Equipment and\noutine Maintenance of the House | 4.7 | 15.4 | 4.1",
+    "chunk_type": "table",
+    "page_refs": [
+      3
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 3
+      }
+    ],
+    "parent_section": null,
+    "token_count": 201,
+    "content_hash": "9116f7b5d4c22380",
+    "metadata": {
+      "table_id": "table_3_1",
+      "rows": 12,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_5",
+    "content": "Issue No. 21/2017 Page 5\n--------------------------------------------------\nMonth-to-Month Inflation Rate\nThe month-to-month general inflation rate for March EFY2017 has increased by 2.7 percent compared to what\nwas observed in February EFY2017. During the same month, the food and non-alcoholic component of the infla-\ntion increased by 2.5 percent whereas the non-food component for its part increased by 3.2 percent.\nTable 3: General Inflation Rate (%, Month-to-Month), March EFY2016 - March EFY2017\nGeneral month-to-month inflation\nMonth\nMarchEFY 2016 4.0\nApril -0.7\nMay 0.5\nJune 0.9\nJuly 1.5\nAugust 1.2\nSeptember 2.4\nOctober 0.9\nNovember -0.8\nDecember 0.8\nJanuary 0.6\nFebruary 0.5\nMarch-EFY 2017 2.7\nMonth-to-Month Inflation of Food and Non-Food categories: In March EFY2017, among the food components\nof the CPI, Meat increased by (1.4%), Fish and sea food increased by (0.9%), Milk, Cheese and Eggs increased by\n(5.7%), Oils and Fats increased by (7.5%), Food products n.e.c increased by (3.0%), Non-Alcoholic beverages and\ncoffee increased by (6.4%) on the month to month basis.",
+    "chunk_type": "table",
+    "page_refs": [
+      4
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 4
+      }
+    ],
+    "parent_section": null,
+    "token_count": 216,
+    "content_hash": "d4e8d8b2a49b2996",
+    "metadata": {
+      "table_id": "table_4_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_6",
+    "content": "Month | General month-to-month inflation\n--------------------------------------------------\nMarchEFY 2016 | 4.0\nApril | -0.7\nMay | 0.5\nJune | 0.9\nJuly | 1.5\nAugust | 1.2\nSeptember | 2.4\nOctober | 0.9\nNovember | -0.8\nDecember | 0.8\nJanuary | 0.6\nFebruary | 0.5\nMarch-EFY 2017 | 2.7",
+    "chunk_type": "table",
+    "page_refs": [
+      4
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 4
+      }
+    ],
+    "parent_section": null,
+    "token_count": 62,
+    "content_hash": "4755f00218b37e33",
+    "metadata": {
+      "table_id": "table_4_1",
+      "rows": 13,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_7",
+    "content": "Issue No. 21/2017 Page 6\n--------------------------------------------------\nLooking at non-food items, the increase in month-to-month comparison was observed for Alcoholic\nbeverages and tobacco increased by (2.4%), Clothing and Footwear (2.8%), Furniture, Furnishing,\nhousehold equipment and routine maintenance of the house increased by (4.1%), Housing, water,\nElectricity, gas and other fuels increased by (2.5%), Transport increased by (1.3%), Recreation and\nculture increased by (3.1%), and Hotel and Restaurants (4.7%), Health increased by (6.4%), Commu-\nnication increased by (2.9%), and Miscellaneous Goods and Services increased by (3.6%) showed an\nincrease during the month.\nFig 2: Food and Non-Food Inflation (%, Month-to-Month), March EFY2016 - March EFY2017",
+    "chunk_type": "table",
+    "page_refs": [
+      5
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 5
+      }
+    ],
+    "parent_section": null,
+    "token_count": 137,
+    "content_hash": "42a01cb81e3b5a7c",
+    "metadata": {
+      "table_id": "table_5_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_8",
+    "content": "Page 7\n--------------------------------------------------\n3: 12-Month Moving Average General, Food and Non-food Inflation\nThe 12-month moving average figures provides a broader perspective on inflation trends over a longer period.\nAs it is indicated in Table below the country level overall inflation rate (annual change based on 12 months\nMoving Average) was 17.9 percent in March EFY2017 as compared to the one observed in a similar period a\nyear ago. Since March-EFY2016 inflation has been relatively eased in the country.\nTable 4. Overall CPI and 12-month moving average Overall Inflation rate March EEFY2017\nMonth 12 Months moving Average 12-Month Moving Average\nOverall CPI overall Inflation\nMarch-EFY2016 406.9 28.9\nApril 414.0 28.1\nMay 421.1 27.4\nJune 427.2 26.6\nJuly 433.2 25.6\nAugust 438.9 24.7\nSeptember 444.9 23.8\nOctober 450.4 22.6\nNovember 457.4 22.0\nDecember 463.5 21.0\nJanuary 469.0 19.9\nFebruary 474.4 18.9\nMarch-EFY2017 479.6 17.9",
+    "chunk_type": "table",
+    "page_refs": [
+      6
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 6
+      }
+    ],
+    "parent_section": null,
+    "token_count": 189,
+    "content_hash": "4563dc752ac319e1",
+    "metadata": {
+      "table_id": "table_6_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_9",
+    "content": "Month | 12 Months moving Average\nOverall CPI | 12-Month Moving Average\noverall Inflation\n--------------------------------------------------\nMarch-EFY2016 | 406.9 | 28.9\nApril | 414.0 | 28.1\nMay | 421.1 | 27.4\nJune | 427.2 | 26.6\nJuly | 433.2 | 25.6\nAugust | 438.9 | 24.7\nSeptember | 444.9 | 23.8\nOctober | 450.4 | 22.6\nNovember | 457.4 | 22.0\nDecember | 463.5 | 21.0\nJanuary | 469.0 | 19.9\nFebruary | 474.4 | 18.9\nMarch-EFY2017 | 479.6 | 17.9",
+    "chunk_type": "table",
+    "page_refs": [
+      6
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 6
+      }
+    ],
+    "parent_section": null,
+    "token_count": 106,
+    "content_hash": "e70c1fb32e7ded25",
+    "metadata": {
+      "table_id": "table_6_1",
+      "rows": 13,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_10",
+    "content": "Issue No. 21/2017 Page 8\n--------------------------------------------------\n12-month moving average Food and Non-Food Inflation rate (March EFY2016 - March EFY2017)\nDis-aggregated, 12-month moving average food inflation increased by 19.3 percent as compared to\nthe one observed a year ago and non-food inflation rate increased by 15.7 percent in March\nEFY2017 as compared to the one observed in March EFY2016.\nTable 5: 12-month moving average Food and Non-Food Inflation rate (March EFY2016 - March EFY2017)\nBaseline: Dec, EFY2009= 100\n12-month moving average Food 12-month moving average Non-Food\nMonth\nInflation Inflation\nMarch-EFY2016 29.3 28.4\nApril 28.9 26.9\nMay 28.6 25.7\nJune 28.1 24.3\nJuly 27.5 23.0\nAugust 26.7 21.7\nSeptember 26.1 20.4\nOctober 25.1 19.0\nNovember 24.4 18.4\nDecember 23.5 17.5\nJanuary 22.1 16.7\nFebruary 20.8 16.1\nMarch-EFY2017 19.3 15.7",
+    "chunk_type": "table",
+    "page_refs": [
+      7
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 7
+      }
+    ],
+    "parent_section": null,
+    "token_count": 169,
+    "content_hash": "61ca5893cf42f01c",
+    "metadata": {
+      "table_id": "table_7_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_11",
+    "content": "Table 5: 12-month moving average Food and Non-Food Inflation rate (March EFY2016 - March EFY2017)\nBaseline: Dec, EFY2009= 100 |  | \n--------------------------------------------------\nMonth | 12-month moving average Food\nInflation | 12-month moving average Non-Food\nInflation\nMarch-EFY2016 | 29.3 | 28.4\nApril | 28.9 | 26.9\nMay | 28.6 | 25.7\nJune | 28.1 | 24.3\nJuly | 27.5 | 23.0\nAugust | 26.7 | 21.7\nSeptember | 26.1 | 20.4\nOctober | 25.1 | 19.0\nNovember | 24.4 | 18.4\nDecember | 23.5 | 17.5\nJanuary | 22.1 | 16.7\nFebruary | 20.8 | 16.1\nMarch-EFY2017 | 19.3 | 15.7",
+    "chunk_type": "table",
+    "page_refs": [
+      7
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 7
+      }
+    ],
+    "parent_section": null,
+    "token_count": 133,
+    "content_hash": "64a292fa37f85668",
+    "metadata": {
+      "table_id": "table_7_1",
+      "rows": 14,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_12",
+    "content": "Issue No. 21/2017 Page 9\n--------------------------------------------------\n4. Annual Inflation trend\nRelatively low and reduction in inflation rate was observed between 2005 and 2009. Since\nEFY2010 inflation rate stick to double digit.\nFig 3: Average Annual General inflation in Ethiopia since Ethiopian EFY2005 (Year-on-Year)\nThe average annual general inflation rate for the country stood at (26.6 %) in EFY2016 compared\nto (32.6 %) in EFY2015. The past five years are unfavorable for the households, due to high infla-\ntion in the country. Specially, in the year EFY2014 and EFY2016, the inflation rate has been over\n30 percent for most months. Internal and external factors forced the inflation to be at higher lev-\nel; COVID19, internal conflict, and Russia-Ukraine War were the major factors.",
+    "chunk_type": "table",
+    "page_refs": [
+      8
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 8
+      }
+    ],
+    "parent_section": null,
+    "token_count": 162,
+    "content_hash": "c1a68b9f830ca971",
+    "metadata": {
+      "table_id": "table_8_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_13",
+    "content": "Issue No. 21/2017 Page 10\n--------------------------------------------------\nFig 4: Average Annual Food Inflation in Ethiopia since EFY2005 (Year-on-Year)\nThe average annual food inflation rate for the country stood at (28.1 %) in EFY2016 compared to\n(31.8 %) in EFY2015, about four percentage point reduction compared to last year figure. But\nsince 2010 the inflation rate stacked at double digit.",
+    "chunk_type": "table",
+    "page_refs": [
+      9
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 9
+      }
+    ],
+    "parent_section": null,
+    "token_count": 77,
+    "content_hash": "d42d78bb3ac655d0",
+    "metadata": {
+      "table_id": "table_9_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_14",
+    "content": "Issue No. 21/2017 Page 11\n--------------------------------------------------\nFig 5: Average Annual Non-Food Inflation in Ethiopia since EFY2005 (Year-on-Year)\nThe average annual non-food inflation rate for the country stood at (24.3 %) in EFY2016 compared\nto (33.8 %) in EFY2015. Non-food inflation movement, the past ten year divided into two. Between\n2005 and 2009 non-food inflation showed reduction and since then the rate demonstrate increas-\ning trend. This is could be attached to Birr devaluation against USD, Russia-Ukraine War, and in-\ncrease of international price of gasoline, as most of non-food items are imported or utilize import-\ned raw materials. Relative easing of the non-food inflation for EFY2016 is observed as a result of\ntight monetary policy in place to reduce bank credit.",
+    "chunk_type": "table",
+    "page_refs": [
+      10
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 10
+      }
+    ],
+    "parent_section": null,
+    "token_count": 161,
+    "content_hash": "7d63b0a36a331f53",
+    "metadata": {
+      "table_id": "table_10_0",
+      "rows": 1,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_table_15",
+    "content": " | Issue No. 21/2017\nPage 12\n--------------------------------------------------\nEnquiries | \n | 5. GLOSSARY\n\u2022 General Inflation: The highest level of aggregation of\ninflation which covers all the items within the scope\nof the inflation.\n\u2022 Food Inflation: inflation which covers all food items\nwithin the scope of the inflation.\n\u2022 Non-food Inflation: inflation which covers all non-\nfood items within the scope of the inflation.\n\u2022 Year-on-Year percentage change: The Yearly per-\ncentage change is the change in the index of the rele-\nvant month of the current year compared with the\nindex of the same month in the previous year ex-\npressed as a percentage.\n\u2022 Month-to-Month percentage change: The monthly\npercentage change is the change in the index of the\nrelevant month compared with the index of the previ-\nous month expressed as a percentage.\n\u2022 Index reference period (December EFY2009=100):\nThe period with which all other periods are compared\n(the period for which the value of the CPI is set at\n100).\nTelephone number\n+251 111 568464\nEmail: alemteferig@gmail.com\nalemayehu.teferi@ess.gov.et\nPostal address : 1143 | \nYou can visit us on the Website at:\nhttp://www.ess.gov.et/ | \n | ",
+    "chunk_type": "table",
+    "page_refs": [
+      11
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 11
+      }
+    ],
+    "parent_section": null,
+    "token_count": 250,
+    "content_hash": "0c44637a68266d9b",
+    "metadata": {
+      "table_id": "table_11_0",
+      "rows": 5,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_text_0",
+    "content": "                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                            MONTHLY    NEWS    RELEASE                              \n                                                                                    \n                     INFLATION   REPORT   ON  MARCH,   EFY 2017                     \n                                                                                    \n                             Issue No. 21/2017               March EFY2017          \n                                                                                    \n                       1. Summary                                                   \n                                                                                    \n                      The Consumer Price Index (CPI), a key economic statistics, is surveyed, analyzed, and\n     Content                                                                        \n                      made available to data users on a monthly basis.              \n                      The year-on-year, general inflation rate (annual percentage change) in the country stood at\n                      13.6 percent for the month of March EFY2017. A year earlier (in March EFY2016), the rate\n        Summary                                                                     \n     \u2022                                                                              \n                      was 26.2 percent. The month-on-month general inflation rate increased by 2.7 percent for\n     \u2022  Year-on-Year  the month of March-EFY2017. It was 4.0 percent in March EFY2016.\n        General, Food &                                                             \n                      General inflation encompasses of two main divisions and twenty-one groups of expendi-\n        Non-food Infla-                                                             \n                      tures. These divisions registered the following price changes during the month of March\n     \u2022  Month-on-     EFY2017 compared with March EFY2016.                          \n        Month General,                                                              \n        Food & Non-   2. Food & Non-alcoholic Beverages and Non-Food Inflation (Year-on-Year)\n        food Inflation                                                              \n                      The year-on-year inflation and the month-to-month inflation rates helps to gauge the cur-\n     \u2022  12-Month Moving                                                             \n        Average General, rent inflation trajectory, as they capture short-term fluctuations in prices and provides an\n        Food and Non-                                                               \n                      immediate indicator of inflationary pressures. Particularly, the month-to-month is also cru-\n        food Inflation                                                              \n                      cial for monitoring changes in consumer prices and identifying any sudden spikes or de-\n     \u2022  Annual Infla- clines in inflation.                                          \n        tion trend                                                                  \n                      Food & Non-alcoholic Beverages index                          \n                      The year-on-year inflation rate, also known as the annual inflation rate, measures the per-\n        Glossary      centage change in overall price levels from one year to the same month in the previous year.\n     \u2022                                                                              \n                      Accordingly, the year-on-year inflation rate of the Food and Non-alcoholic component of the\n                      CPI, for the month of March 2017 EFY stood at 11.9%. This implies that the CPI of Food and\n                      Non-Alcoholic Beverages has, on average, increased by 11.9% compared to March EFY2016.\n                      The major contributing factors for the rise of food inflation for March EFY2017 was the ob-\n                      served increase in the average prices of major food commodities such as bread and cereals\n                      (1.2%), vegetables (6.1%), meat (17.8%), Sugar, jam, honey & chocolate (28.8%), Milk, Cheese\n                      and Eggs (8.2%), Oils and Fats (36.3%), Fruit (13.4%), and Food products n.e.c (26.7%).\n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    ",
+    "chunk_type": "text",
+    "page_refs": [
+      0
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 0
+      }
+    ],
+    "parent_section": null,
+    "token_count": 490,
+    "content_hash": "ced9be28504faba7",
+    "metadata": {
+      "block_count": 1,
+      "chunk_index": 0
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_text_1",
+    "content": "                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                            MONTHLY    NEWS    RELEASE                              \n                                                                                    \n                     INFLATION   REPORT   ON  MARCH,   EFY 2017                     \n                                                                                    \n                             Issue No. 21/2017               March EFY2017          \n                                                                                    \n                       1. Summary                                                   \n                                                                                    \n                      The Consumer Price Index (CPI), a key economic statistics, is surveyed, analyzed, and\n     Content                                                                        \n                      made available to data users on a monthly basis.              \n                      The year-on-year, general inflation rate (annual percentage change) in the country stood at\n                      13.6 percent for the month of March EFY2017. A year earlier (in March EFY2016), the rate\n        Summary                                                                     \n     \u2022                                                                              \n                      was 26.2 percent. The month-on-month general inflation rate increased by 2.7 percent for\n     \u2022  Year-on-Year  the month of March-EFY2017. It was 4.0 percent in March EFY2016.\n        General, Food &                                                             \n                      General inflation encompasses of two main divisions and twenty-one groups of expendi-\n        Non-food Infla-                                                             \n                      tures. These divisions registered the following price changes during the month of March\n     \u2022  Month-on-     EFY2017 compared with March EFY2016.                          \n        Month General,                                                              \n        Food & Non-   2. Food & Non-alcoholic Beverages and Non-Food Inflation (Year-on-Year)\n        food Inflation                                                              \n                      The year-on-year inflation and the month-to-month inflation rates helps to gauge the cur-\n     \u2022  12-Month Moving                                                             \n        Average General, rent inflation trajectory, as they capture short-term fluctuations in prices and provides an\n        Food and Non-                                                               \n                      immediate indicator of inflationary pressures. Particularly, the month-to-month is also cru-\n        food Inflation                                                              \n                      cial for monitoring changes in consumer prices and identifying any sudden spikes or de-\n     \u2022  Annual Infla- clines in inflation.                                          \n        tion trend                                                                  \n                      Food & Non-alcoholic Beverages index                          \n                      The year-on-year inflation rate, also known as the annual inflation rate, measures the per-\n        Glossary      centage change in overall price levels from one year to the same month in the previous year.\n     \u2022                                                                              \n                      Accordingly, the year-on-year inflation rate of the Food and Non-alcoholic component of the\n                      CPI, for the month of March 2017 EFY stood at 11.9%. This implies that the CPI of Food and\n                      Non-Alcoholic Beverages has, on average, increased by 11.9% compared to March EFY2016.\n                      The major contributing factors for the rise of food inflation for March EFY2017 was the ob-\n                      served increase in the average prices of major food commodities such as bread and cereals\n                      (1.2%), vegetables (6.1%), meat (17.8%), Sugar, jam, honey & chocolate (28.8%), Milk, Cheese\n                      and Eggs (8.2%), Oils and Fats (36.3%), Fruit (13.4%), and Food products n.e.c (26.7%).\n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n         Issue No. 21/2017                                             Page 2       \n       Beginning from March-EFY 2016 the magnitude of the inflation rate steadily declined up to March-EFY\n                                                                                    \n       2017. In March EFY-2017 General inflation was 13.6% as compared to the one observed in March-\n       EFY2016.                                                                     \n                                                                                    \n                                                                                    \n                                                                                    \n       Month/Year                     General        Food          Non-Food         \n                                                                                    \n       March EFY2009 - June EFY2010    14.4           13.4           15.9           \n           Table 1: General, Food and Non-Food Inflation Rate (%, Year-on-Year) March EFY2016 - March EFY201 7\n                                                                                    \n       March EFY 2010 - JuneEFY2011    12.6           13.1           11.9           \n                                                                                    \n       March EFY2011 - June EFY2012    19.9           23.3           15.9           \n                                                                                    \n                                                                                    \n       March EFY2012 - June EFY2013    20.2           23.2           16.4           \n                                                                                    \n       March EFY2013 - June EFY2014    33.8           40.3           25.2           \n                                                                                    \n                                                                                    \n       March EFY2014 - June EFY2015    32.5           31.7           33.9           \n                                                                                    \n       March EFY2015 - June EFY2016    26.6           28.1           24.3           \n                                                                                    \n                                                                                    \n       March-EFY 2016                  26.2           29.0           22.0           \n       April                           23.3           27.0           18.0           \n                                                                                    \n       May                             23.3           25.5           20.0           \n       June                            19.9           22.7           15.8           \n       July                            18.6           20.6           15.6           \n       August                          17.2           18.8           14.7           \n                                                                                    \n       September                       17.5           19.6           14.3           \n       October                         16.1           19.2           11.6           \n       November                        16.9           18.5           14.4           \n       December                        17.0           18.7           14.4           \n                                                                                    \n       January                         15.5           15.8           15.0           \n       February                        15.0           14.6           15.6           \n       March-EFY 2017                  13.6           11.9           16.2           \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n           Issue No. 21/2017                                           Page 3       \n                                                                                    \n            Fig 1: Food and Non-Food Inflation (%, Year-on-Year), March EFY2016 - March EFY2017\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n       Non-Food Inflation and Alcoholic Beverages (Year-on-Year)                    \n                                                                                    \n     As can be seen from the above figure, the non-food year-on-year inflation rate increased in March-\n                                                                                    \n     ETY2017 as compared to last month while the Food inflation decreased in magnitude. The Non-Food\n     inflation increased by 16.2 percent in the same period. Particularly, Alcoholic Beverages and Tobacco\n     increased by (15.2%); Housing, water, electricity & other fuel component (17.4%); Furnishings, house-\n     hold equipment & routine maintenance of the House (15.4%); Health (12.7%); Transport (32.5%); Com-\n     munication (2.0%); Education (23.3%); Restaurants and hotels (18.3%) and Miscellaneous goods and\n     services (18.4%) have contributed for the rise in non-food inflation rate in March EFY2017.\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    ",
+    "chunk_type": "text",
+    "page_refs": [
+      0,
+      1,
+      2
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 0
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 1
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 2
+      }
+    ],
+    "parent_section": null,
+    "token_count": 902,
+    "content_hash": "6f0ecd0d9633382c",
+    "metadata": {
+      "block_count": 3,
+      "chunk_index": 1
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_text_2",
+    "content": "                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n           Issue No. 21/2017                                           Page 3       \n                                                                                    \n            Fig 1: Food and Non-Food Inflation (%, Year-on-Year), March EFY2016 - March EFY2017\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n       Non-Food Inflation and Alcoholic Beverages (Year-on-Year)                    \n                                                                                    \n     As can be seen from the above figure, the non-food year-on-year inflation rate increased in March-\n                                                                                    \n     ETY2017 as compared to last month while the Food inflation decreased in magnitude. The Non-Food\n     inflation increased by 16.2 percent in the same period. Particularly, Alcoholic Beverages and Tobacco\n     increased by (15.2%); Housing, water, electricity & other fuel component (17.4%); Furnishings, house-\n     hold equipment & routine maintenance of the House (15.4%); Health (12.7%); Transport (32.5%); Com-\n     munication (2.0%); Education (23.3%); Restaurants and hotels (18.3%) and Miscellaneous goods and\n     services (18.4%) have contributed for the rise in non-food inflation rate in March EFY2017.\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                              Page 4       \n                                                                                    \n       Major sub divisions in the food and non-food commodities (year-on-Year).     \n                                                                                    \n       When we look at major division of food and non-food commodities, which holds large share in the\n       commodity basket, the magnitude of inflation rate at March EFY2017 showed a declining situation\n                                                                                    \n       for Food as compared to the previous month. From Food and Non-Alcoholic Beverage aspect, the\n       highest weight is hold by Bread and Cereals, Vegetables, Other-Food products, Non-Alcoholic Bev-\n                                                                                    \n       erage, and Meat; whose inflation at March EFY2017 is recorded an increase for Bread & Cereals\n       (1.2%); Vegetables (6.1%); Other-Food products (Food products not elsewhere classified) (26.7%);\n                                                                                    \n       Meat (17.8%) and Non-Alcoholic Beverages & coffee (50.2%).                   \n       Similarly, during March 2017 EFY the year-on-year inflation rate of the major Non- Food items of\n                                                                                    \n       Housing, Water, Electricity, Gas, & Other Fuels (17.4%); Restaurants and Hotels (18.3%); Alco-\n       holic Beverages & Tobacco (15.2%); Furnishings, Household Equipment & Routine Household\n                                                                                    \n       Maintenance of the House (15.4%) and Clothing and Footwear (8.7%).           \n                                                                                    \n             Table 2. Major sub divisions in the food and non-food commodities (year-on-Year).\n      CPI Items                Items Wight in % change on Year-on-Year % change in Month-to-\n                               CPI (%)    Inflation March EFY2016 Month inflation July\n                                          compared with March EFY2017 compared to   \n                                          EFY2017            March EFY2017          \n                                                                                    \n      Major Food and Non-Alcoholic Bever-                                           \n                                   53.5           11.9             2.5              \n      age components                                                                \n      Bread and Cereals            17.1           1.2               1.4             \n      Vegetables                   12.3           6.1               0.5             \n      Other-Food products          5.6            26.7              3.0             \n      Non-Alcoholic Beverage        5.1           50.2              6.4             \n      Meat                          4.1           17.8              1.4             \n      Major Non-Food Components    46.5           16.2             3.2              \n                                                                                    \n      Housing, Water, Electricity, Gas and Other                                    \n                                   16.8           17.4              2.5             \n      Fuels                                                                         \n      Clothing and Footwear        5.7            8.7               2.8             \n      Restaurants and Hotels       5.3            18.3              4.7             \n      Alcoholic Beverages and Tobacco 4.9         15.2              2.4             \n      Furnishings, Household Equipment and 4.7    15.4              4.1             \n      Routine Maintenance of the House                                              \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    ",
+    "chunk_type": "text",
+    "page_refs": [
+      2,
+      3
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 2
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 3
+      }
+    ],
+    "parent_section": null,
+    "token_count": 565,
+    "content_hash": "332cbcd6f68722cd",
+    "metadata": {
+      "block_count": 2,
+      "chunk_index": 2
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_text_3",
+    "content": "                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                              Page 4       \n                                                                                    \n       Major sub divisions in the food and non-food commodities (year-on-Year).     \n                                                                                    \n       When we look at major division of food and non-food commodities, which holds large share in the\n       commodity basket, the magnitude of inflation rate at March EFY2017 showed a declining situation\n                                                                                    \n       for Food as compared to the previous month. From Food and Non-Alcoholic Beverage aspect, the\n       highest weight is hold by Bread and Cereals, Vegetables, Other-Food products, Non-Alcoholic Bev-\n                                                                                    \n       erage, and Meat; whose inflation at March EFY2017 is recorded an increase for Bread & Cereals\n       (1.2%); Vegetables (6.1%); Other-Food products (Food products not elsewhere classified) (26.7%);\n                                                                                    \n       Meat (17.8%) and Non-Alcoholic Beverages & coffee (50.2%).                   \n       Similarly, during March 2017 EFY the year-on-year inflation rate of the major Non- Food items of\n                                                                                    \n       Housing, Water, Electricity, Gas, & Other Fuels (17.4%); Restaurants and Hotels (18.3%); Alco-\n       holic Beverages & Tobacco (15.2%); Furnishings, Household Equipment & Routine Household\n                                                                                    \n       Maintenance of the House (15.4%) and Clothing and Footwear (8.7%).           \n                                                                                    \n             Table 2. Major sub divisions in the food and non-food commodities (year-on-Year).\n      CPI Items                Items Wight in % change on Year-on-Year % change in Month-to-\n                               CPI (%)    Inflation March EFY2016 Month inflation July\n                                          compared with March EFY2017 compared to   \n                                          EFY2017            March EFY2017          \n                                                                                    \n      Major Food and Non-Alcoholic Bever-                                           \n                                   53.5           11.9             2.5              \n      age components                                                                \n      Bread and Cereals            17.1           1.2               1.4             \n      Vegetables                   12.3           6.1               0.5             \n      Other-Food products          5.6            26.7              3.0             \n      Non-Alcoholic Beverage        5.1           50.2              6.4             \n      Meat                          4.1           17.8              1.4             \n      Major Non-Food Components    46.5           16.2             3.2              \n                                                                                    \n      Housing, Water, Electricity, Gas and Other                                    \n                                   16.8           17.4              2.5             \n      Fuels                                                                         \n      Clothing and Footwear        5.7            8.7               2.8             \n      Restaurants and Hotels       5.3            18.3              4.7             \n      Alcoholic Beverages and Tobacco 4.9         15.2              2.4             \n      Furnishings, Household Equipment and 4.7    15.4              4.1             \n      Routine Maintenance of the House                                              \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n      Issue No. 21/2017                                                  Page 5     \n                                                                                    \n      Month-to-Month   Inflation Rate                                               \n                                                                                    \n      The month-to-month general inflation rate for March EFY2017 has increased by 2.7 percent compared to what\n                                                                                    \n      was observed in February EFY2017. During the same month, the food and non-alcoholic component of the infla-\n      tion increased by 2.5 percent whereas the non-food component for its part increased by 3.2 percent.\n                                                                                    \n                                                                                    \n          Table 3: General Inflation Rate (%, Month-to-Month), March EFY2016 - March EFY2017\n                                                                                    \n                                         General month-to-month inflation           \n             Month                                                                  \n             MarchEFY 2016                          4.0                             \n             April                                 -0.7                             \n             May                                    0.5                             \n             June                                   0.9                             \n             July                                   1.5                             \n             August                                 1.2                             \n             September                              2.4                             \n             October                                0.9                             \n             November                              -0.8                             \n             December                               0.8                             \n             January                                0.6                             \n             February                               0.5                             \n             March-EFY 2017                         2.7                             \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n      Month-to-Month Inflation of Food and Non-Food categories: In March EFY2017, among the food components\n                                                                                    \n      of the CPI, Meat increased by (1.4%), Fish and sea food increased by (0.9%), Milk, Cheese and Eggs increased by\n      (5.7%), Oils and Fats increased by (7.5%), Food products n.e.c increased by (3.0%), Non-Alcoholic beverages and\n                                                                                    \n      coffee increased by (6.4%) on the month to month basis.                       \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                              Page 6       \n                                                                                    \n      Looking at non-food items, the increase in month-to-month comparison was observed for Alcoholic\n      beverages and tobacco increased by (2.4%), Clothing and Footwear (2.8%), Furniture, Furnishing,\n                                                                                    \n      household equipment and routine maintenance of the house increased by (4.1%), Housing, water,\n      Electricity, gas and other fuels increased by (2.5%), Transport increased by (1.3%), Recreation and\n                                                                                    \n      culture increased by (3.1%), and Hotel and Restaurants (4.7%), Health increased by (6.4%), Commu-\n      nication increased by (2.9%), and Miscellaneous Goods and Services increased by (3.6%) showed an\n                                                                                    \n      increase during the month.                                                    \n                                                                                    \n          Fig 2: Food and Non-Food Inflation (%, Month-to-Month), March EFY2016 - March EFY2017\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    ",
+    "chunk_type": "text",
+    "page_refs": [
+      3,
+      4,
+      5
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 3
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 4
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 5
+      }
+    ],
+    "parent_section": null,
+    "token_count": 766,
+    "content_hash": "1f689c08f049ac83",
+    "metadata": {
+      "block_count": 3,
+      "chunk_index": 3
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_text_4",
+    "content": "                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                              Page 6       \n                                                                                    \n      Looking at non-food items, the increase in month-to-month comparison was observed for Alcoholic\n      beverages and tobacco increased by (2.4%), Clothing and Footwear (2.8%), Furniture, Furnishing,\n                                                                                    \n      household equipment and routine maintenance of the house increased by (4.1%), Housing, water,\n      Electricity, gas and other fuels increased by (2.5%), Transport increased by (1.3%), Recreation and\n                                                                                    \n      culture increased by (3.1%), and Hotel and Restaurants (4.7%), Health increased by (6.4%), Commu-\n      nication increased by (2.9%), and Miscellaneous Goods and Services increased by (3.6%) showed an\n                                                                                    \n      increase during the month.                                                    \n                                                                                    \n          Fig 2: Food and Non-Food Inflation (%, Month-to-Month), March EFY2016 - March EFY2017\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                        Page 7      \n                                                                                    \n         3: 12-Month Moving Average General, Food and Non-food Inflation            \n                                                                                    \n                                                                                    \n        The 12-month moving average figures provides a broader perspective on inflation trends over a longer period.\n                                                                                    \n        As it is indicated in Table below the country level overall inflation rate (annual change based on 12 months\n        Moving Average) was 17.9 percent in March EFY2017 as compared to the one observed in a similar period a\n                                                                                    \n        year ago. Since March-EFY2016 inflation has been relatively eased in the country.\n                                                                                    \n           Table 4. Overall CPI and 12-month moving average Overall Inflation rate March EEFY2017\n                                                                                    \n                                                                                    \n                                                                                    \n           Month                  12 Months moving Average 12-Month Moving Average  \n                                  Overall CPI          overall Inflation            \n                                                                                    \n           March-EFY2016                  406.9                28.9                 \n           April                          414.0                 28.1                \n                                                                                    \n           May                            421.1                27.4                 \n                                                                                    \n           June                           427.2                26.6                 \n           July                           433.2                25.6                 \n                                                                                    \n           August                         438.9                24.7                 \n                                                                                    \n           September                      444.9                23.8                 \n           October                        450.4                22.6                 \n                                                                                    \n           November                       457.4                22.0                 \n                                                                                    \n           December                       463.5                21.0                 \n                                                                                    \n           January                        469.0                19.9                 \n           February                       474.4                18.9                 \n                                                                                    \n           March-EFY2017                  479.6                17.9                 \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                               Page 8      \n                                                                                    \n                                                                                    \n          12-month moving average Food and Non-Food Inflation rate (March EFY2016 - March EFY2017)\n                                                                                    \n                                                                                    \n         Dis-aggregated, 12-month moving average food inflation increased by 19.3 percent as compared to\n         the one observed a year ago and non-food inflation rate increased by 15.7 percent in March\n                                                                                    \n         EFY2017 as compared to the one observed in March EFY2016.                  \n                                                                                    \n      Table 5: 12-month moving average Food and Non-Food Inflation rate (March EFY2016 - March EFY2017)\n                                                                                    \n                   Baseline: Dec, EFY2009= 100                                      \n                                                                                    \n                              12-month moving average Food 12-month moving average Non-Food\n               Month                                                                \n                                     Inflation              Inflation               \n      March-EFY2016                   29.3                   28.4                   \n                                                                                    \n      April                           28.9                   26.9                   \n                                                                                    \n                                                                                    \n      May                             28.6                   25.7                   \n                                                                                    \n      June                            28.1                   24.3                   \n                                                                                    \n      July                            27.5                   23.0                   \n                                                                                    \n      August                          26.7                    21.7                  \n                                                                                    \n      September                       26.1                   20.4                   \n      October                         25.1                   19.0                   \n                                                                                    \n      November                        24.4                   18.4                   \n      December                        23.5                   17.5                   \n                                                                                    \n      January                         22.1                   16.7                   \n                                                                                    \n      February                        20.8                   16.1                   \n      March-EFY2017                   19.3                   15.7                   \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    ",
+    "chunk_type": "text",
+    "page_refs": [
+      5,
+      6,
+      7
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 5
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 6
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 7
+      }
+    ],
+    "parent_section": null,
+    "token_count": 532,
+    "content_hash": "338694190e07e8c8",
+    "metadata": {
+      "block_count": 3,
+      "chunk_index": 4
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_text_5",
+    "content": "                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                               Page 8      \n                                                                                    \n                                                                                    \n          12-month moving average Food and Non-Food Inflation rate (March EFY2016 - March EFY2017)\n                                                                                    \n                                                                                    \n         Dis-aggregated, 12-month moving average food inflation increased by 19.3 percent as compared to\n         the one observed a year ago and non-food inflation rate increased by 15.7 percent in March\n                                                                                    \n         EFY2017 as compared to the one observed in March EFY2016.                  \n                                                                                    \n      Table 5: 12-month moving average Food and Non-Food Inflation rate (March EFY2016 - March EFY2017)\n                                                                                    \n                   Baseline: Dec, EFY2009= 100                                      \n                                                                                    \n                              12-month moving average Food 12-month moving average Non-Food\n               Month                                                                \n                                     Inflation              Inflation               \n      March-EFY2016                   29.3                   28.4                   \n                                                                                    \n      April                           28.9                   26.9                   \n                                                                                    \n                                                                                    \n      May                             28.6                   25.7                   \n                                                                                    \n      June                            28.1                   24.3                   \n                                                                                    \n      July                            27.5                   23.0                   \n                                                                                    \n      August                          26.7                    21.7                  \n                                                                                    \n      September                       26.1                   20.4                   \n      October                         25.1                   19.0                   \n                                                                                    \n      November                        24.4                   18.4                   \n      December                        23.5                   17.5                   \n                                                                                    \n      January                         22.1                   16.7                   \n                                                                                    \n      February                        20.8                   16.1                   \n      March-EFY2017                   19.3                   15.7                   \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n       Issue No. 21/2017                                                Page 9      \n                                                                                    \n        4. Annual Inflation trend                                                   \n                                                                                    \n                                                                                    \n        Relatively low and reduction in inflation rate was observed between 2005 and 2009. Since\n        EFY2010 inflation rate stick to double digit.                               \n                                                                                    \n                                                                                    \n          Fig 3: Average Annual General inflation in Ethiopia since Ethiopian EFY2005 (Year-on-Year)\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n         The average annual general inflation rate for the country stood at (26.6 %) in EFY2016 compared\n                                                                                    \n         to (32.6 %) in EFY2015. The past five years are unfavorable for the households, due to high infla-\n         tion in the country. Specially, in the year EFY2014 and EFY2016, the inflation rate has been over\n                                                                                    \n         30 percent for most months. Internal and external factors forced the inflation to be at higher lev-\n                                                                                    \n         el; COVID19, internal conflict, and Russia-Ukraine War were the major factors.\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                              Page 10      \n                                                                                    \n              Fig 4: Average Annual Food Inflation in Ethiopia since EFY2005 (Year-on-Year)\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n         The average annual food inflation rate for the country stood at (28.1 %) in EFY2016 compared to\n                                                                                    \n         (31.8 %) in EFY2015, about four percentage point reduction compared to last year figure. But\n         since 2010 the inflation rate stacked at double digit.                     \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                              Page 11      \n                                                                                    \n                                                                                    \n             Fig 5: Average Annual Non-Food Inflation in Ethiopia since EFY2005 (Year-on-Year)\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        The average annual non-food inflation rate for the country stood at (24.3 %) in EFY2016 compared\n        to (33.8 %) in EFY2015. Non-food inflation movement, the past ten year divided into two. Between\n                                                                                    \n        2005 and 2009 non-food inflation showed reduction and since then the rate demonstrate increas-\n        ing trend. This is could be attached to Birr devaluation against USD, Russia-Ukraine War, and in-\n                                                                                    \n        crease of international price of gasoline, as most of non-food items are imported or utilize import-\n                                                                                    \n        ed raw materials. Relative easing of the non-food inflation for EFY2016 is observed as a result of\n        tight monetary policy in place to reduce bank credit.                       \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    ",
+    "chunk_type": "text",
+    "page_refs": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 7
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 8
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 9
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 10
+      }
+    ],
+    "parent_section": null,
+    "token_count": 618,
+    "content_hash": "825fbfbc92027ed6",
+    "metadata": {
+      "block_count": 4,
+      "chunk_index": 5
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "Consumer Price Index March 2025_text_6",
+    "content": "                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        Issue No. 21/2017                                              Page 11      \n                                                                                    \n                                                                                    \n             Fig 5: Average Annual Non-Food Inflation in Ethiopia since EFY2005 (Year-on-Year)\n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n        The average annual non-food inflation rate for the country stood at (24.3 %) in EFY2016 compared\n        to (33.8 %) in EFY2015. Non-food inflation movement, the past ten year divided into two. Between\n                                                                                    \n        2005 and 2009 non-food inflation showed reduction and since then the rate demonstrate increas-\n        ing trend. This is could be attached to Birr devaluation against USD, Russia-Ukraine War, and in-\n                                                                                    \n        crease of international price of gasoline, as most of non-food items are imported or utilize import-\n                                                                                    \n        ed raw materials. Relative easing of the non-food inflation for EFY2016 is observed as a result of\n        tight monetary policy in place to reduce bank credit.                       \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    \n\n                                                                                    \n                                                                                    \n                                                                                    \n                      ETHIOPIAN     STATISTICAL     SERVICE                         \n                                                                                    \n                                Statistical Bulletin                                \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                               Issue No. 21/2017                                    \n                                                                      Page 12       \n           Enquiries                                                                \n                                  5. GLOSSARY                                       \n                                                                                    \n                                                                                    \n          Telephone number        \u2022  General Inflation: The highest level of aggregation of\n                                                                                    \n            +251 111 568464                                                         \n                                     inflation which covers all the items within the scope\n                                     of the inflation.                              \n       Email: alemteferig@gmail.com \u2022 Food Inflation: inflation which covers all food items\n        alemayehu.teferi@ess.gov.et                                                 \n                                     within the scope of the inflation.             \n           Postal address : 1143  \u2022  Non-food Inflation: inflation which covers all non-\n                                                                                    \n                                     food items within the scope of the inflation.  \n                                  \u2022  Year-on-Year percentage change: The Yearly per-\n                                                                                    \n                                     centage change is the change in the index of the rele-\n                                     vant month of the current year compared with the\n                                                                                    \n                                     index of the same month in the previous year ex-\n      You can visit us on the Website at:                                           \n                                     pressed as a percentage.                       \n      http://www.ess.gov.et/                                                        \n                                  \u2022  Month-to-Month percentage change: The monthly  \n                                     percentage change is the change in the index of the\n                                     relevant month compared with the index of the previ-\n                                     ous month expressed as a percentage.           \n                                                                                    \n                                  \u2022  Index reference period (December EFY2009=100): \n                                     The period with which all other periods are compared\n                                                                                    \n                                     (the period for which the value of the CPI is set at\n                                     100).                                          \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                         YOUR RELIABLE DATA SOURCE                www.ess.gov.et    \n                                                                                    \n                                                                                    \n                                                                                    ",
+    "chunk_type": "text",
+    "page_refs": [
+      10,
+      11
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 10
+      },
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 11
+      }
+    ],
+    "parent_section": null,
+    "token_count": 428,
+    "content_hash": "7889914959bfb07f",
+    "metadata": {
+      "block_count": 2,
+      "chunk_index": 6
+    },
+    "related_chunks": []
+  }
+]

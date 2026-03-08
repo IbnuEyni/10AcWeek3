@@ -1,0 +1,16 @@
+{
+  "doc_id": "test",
+  "filename": "test.pdf",
+  "origin_type": "scanned_image",
+  "layout_complexity": "single_column",
+  "language": "en",
+  "language_confidence": 0.95,
+  "domain_hint": "general",
+  "estimated_extraction_cost": "needs_vision_model",
+  "total_pages": 1,
+  "character_density": 0.00015885984023238924,
+  "image_ratio": 0.0,
+  "has_font_metadata": true,
+  "table_count_estimate": 0,
+  "page_profiles": null
+}

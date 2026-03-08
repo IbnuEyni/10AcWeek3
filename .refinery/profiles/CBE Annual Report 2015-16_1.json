@@ -1,0 +1,19 @@
+{
+  "doc_id": "CBE Annual Report 2015-16_1",
+  "filename": "CBE Annual Report 2015-16_1.pdf",
+  "origin_type": "scanned_image",
+  "layout_complexity": "single_column",
+  "language": "en",
+  "language_confidence": 0.95,
+  "domain_hint": "financial",
+  "estimated_extraction_cost": "needs_vision_model",
+  "total_pages": 34,
+  "origin_confidence": 0.85,
+  "layout_confidence": 0.8,
+  "domain_confidence": 0.7,
+  "character_density": 0.0,
+  "image_ratio": 1.0,
+  "has_font_metadata": false,
+  "table_count_estimate": 0,
+  "page_profiles": null
+}

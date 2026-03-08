@@ -1,0 +1,19 @@
+{
+  "doc_id": "Consumer Price Index March 2025",
+  "filename": "Consumer Price Index March 2025.pdf",
+  "origin_type": "form_fillable",
+  "layout_complexity": "table_heavy",
+  "language": "en",
+  "language_confidence": 0.95,
+  "domain_hint": "general",
+  "estimated_extraction_cost": "needs_layout_model",
+  "total_pages": 12,
+  "origin_confidence": 0.85,
+  "layout_confidence": 0.82,
+  "domain_confidence": 0.5,
+  "character_density": 0.0023237549789837373,
+  "image_ratio": 0.161486666570388,
+  "has_font_metadata": true,
+  "table_count_estimate": 16,
+  "page_profiles": null
+}

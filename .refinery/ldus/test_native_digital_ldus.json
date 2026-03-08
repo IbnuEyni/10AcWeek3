@@ -1,0 +1,79 @@
+[
+  {
+    "ldu_id": "test_native_digital_table_0",
+    "content": "Quarter | Revenue | Expenses | Profit\n--------------------------------------------------\nQ1 | $100,000 | $60,000 | $40,000\nQ2 | $120,000 | $65,000 | $55,000\nQ3 | $150,000 | $70,000 | $80,000\nQ4 | $180,000 | $75,000 | $105,000",
+    "chunk_type": "table",
+    "page_refs": [
+      0
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 0
+      }
+    ],
+    "parent_section": null,
+    "token_count": 48,
+    "content_hash": "27323b563692d0c2",
+    "metadata": {
+      "table_id": "table_0_0",
+      "rows": 4,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "test_native_digital_table_1",
+    "content": "Department | Budget | Actual | Variance\n--------------------------------------------------\nEngineering | $50,000 | $48,000 | -$2,000\nMarketing | $30,000 | $32,000 | +$2,000\nSales | $40,000 | $38,000 | -$2,000\nOperations | $20,000 | $19,000 | -$1,000",
+    "chunk_type": "table",
+    "page_refs": [
+      0
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 0
+      }
+    ],
+    "parent_section": null,
+    "token_count": 48,
+    "content_hash": "5cb4823f9a1c0561",
+    "metadata": {
+      "table_id": "table_0_1",
+      "rows": 4,
+      "caption": null
+    },
+    "related_chunks": []
+  },
+  {
+    "ldu_id": "test_native_digital_ChunkType.TEXT_0",
+    "content": "                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                             Financial   Report   2024                              \n                                                                                    \n                                                                                    \n                                                                                    \n           Executive Summary                                                        \n                                                                                    \n           This is a native digital PDF created for testing document extraction. It contains structured text, tables,\n           and proper formatting that should be easily extractable without OCR.     \n                                                                                    \n                                                                                    \n           Revenue Breakdown                                                        \n                                                                                    \n                         Quarter Revenue   Expenses   Profit                        \n                                                                                    \n                           Q1      $100,000  $60,000  $40,000                       \n                           Q2      $120,000  $65,000  $55,000                       \n                                                                                    \n                           Q3      $150,000  $70,000  $80,000                       \n                           Q4      $180,000  $75,000  $105,000                      \n                                                                                    \n                                                                                    \n           Analysis                                                                 \n                                                                                    \n           The company showed strong growth throughout the year with consistent quarter-over-quarter\n           improvements. Revenue increased by 80% from Q1 to Q4, while maintaining healthy profit margins.\n                                                                                    \n                                                                                    \n           Department Expenses                                                      \n                                                                                    \n                        Department  Budget   Actual Variance                        \n                                                                                    \n                          Engineering $50,000 $48,000 -$2,000                       \n                          Marketing  $30,000 $32,000  +$2,000                       \n                            Sales    $40,000 $38,000  -$2,000                       \n                                                                                    \n                          Operations $20,000 $19,000  -$1,000                       \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    \n                                                                                    ",
+    "chunk_type": "text",
+    "page_refs": [
+      0
+    ],
+    "bounding_boxes": [
+      {
+        "x0": 0.0,
+        "y0": 0.0,
+        "x1": 612.0,
+        "y1": 792.0,
+        "page": 0
+      }
+    ],
+    "parent_section": null,
+    "token_count": 134,
+    "content_hash": "01f6dcd01a18bb34",
+    "metadata": {
+      "block_count": 1,
+      "chunk_index": 0
+    },
+    "related_chunks": []
+  }
+]

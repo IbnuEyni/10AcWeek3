@@ -1,0 +1,20 @@
+{
+  "doc_id": "test_native_digital",
+  "filename": "test_native_digital.pdf",
+  "root_sections": [
+    {
+      "section_id": "sec_1",
+      "title": "Document Content",
+      "page_start": 0,
+      "page_end": 0,
+      "level": 0,
+      "summary": null,
+      "key_entities": [],
+      "data_types_present": [],
+      "parent_id": null,
+      "child_sections": [],
+      "ldu_ids": []
+    }
+  ],
+  "total_pages": 1
+}

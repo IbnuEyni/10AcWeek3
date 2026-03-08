@@ -1,0 +1,19 @@
+{
+  "doc_id": "test_native_digital",
+  "filename": "test_native_digital.pdf",
+  "origin_type": "mixed",
+  "layout_complexity": "single_column",
+  "language": "en",
+  "language_confidence": 0.95,
+  "domain_hint": "general",
+  "estimated_extraction_cost": "needs_layout_model",
+  "total_pages": 1,
+  "origin_confidence": 0.7,
+  "layout_confidence": 0.8,
+  "domain_confidence": 0.5,
+  "character_density": 0.0015720934838581897,
+  "image_ratio": 0.0,
+  "has_font_metadata": true,
+  "table_count_estimate": 2,
+  "page_profiles": null
+}
