@@ -40,15 +40,13 @@ htmlcov/
 .env
 .env.local
 
-# Refinery artifacts
-.refinery/
-!.refinery/.gitkeep
+# Refinery artifacts (keep outputs for grading)
+.refinery/tmp/
+.refinery/cache/
 
-# Data
-data/
-*.pdf
-*.zip
-report/
+# Data (keep sample documents)
+data/raw/
+data/temp/
 
 # helper
 check_ocr.py
