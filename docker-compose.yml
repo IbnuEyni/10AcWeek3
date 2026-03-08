@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  refinery:
+    build: .
+    container_name: document-intelligence-refinery
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./.refinery:/app/.refinery
+      - ./.env:/app/.env
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+    restart: unless-stopped
+    command: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
+
+  # Optional: Run tests
+  test:
+    build: .
+    container_name: refinery-tests
+    volumes:
+      - ./tests:/app/tests
+      - ./.refinery:/app/.refinery
+    command: pytest tests/ -v --cov=src
+    profiles:
+      - test
